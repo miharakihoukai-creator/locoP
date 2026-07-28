@@ -13,7 +13,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;}
-body{padding:0 0 96px;line-height:1.6;font-size:15px;}
+body{padding:0 0 100px;line-height:1.6;font-size:15px;}
 .wrap{max-width:560px;margin:0 auto;padding:0 16px;}
 header{background:var(--primary);color:#fff;padding:18px 16px 16px;}
 header .h-in{max-width:560px;margin:0 auto;}
@@ -26,10 +26,10 @@ header p{margin:4px 0 0;font-size:12.5px;opacity:.95;}
 .stepname{font-size:12px;color:var(--mute);margin-bottom:12px;}
 h2{font-size:17px;margin:18px 0 8px;font-weight:800;}
 h2 .num{color:var(--primary);margin-right:6px;}
-p.lead{margin:0 0 14px;font-size:14px;color:#4a4e58;}
+p.lead{margin:0 0 12px;font-size:13.5px;color:#4a4e58;}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;}
 .card.sel{border-color:var(--primary);box-shadow:0 0 0 2px rgba(242,80,63,.14);}
-label.f{display:block;font-size:13px;font-weight:700;margin:12px 0 5px;}
+label.f{display:block;font-size:13px;font-weight:700;margin:14px 0 5px;}
 label.f span{font-weight:400;color:var(--mute);font-size:12px;}
 input[type=text],input[type=email],input[type=tel],select,textarea{
   width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:16px;
@@ -45,10 +45,8 @@ textarea{min-height:76px;resize:vertical;}
 .nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,253,248,.97);
   border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));}
 .nav .in{max-width:560px;margin:0 auto;display:flex;gap:10px;}
-.nav .in .btn{flex:1;}
 .nav .in .btn.back{flex:0 0 34%;}
-.pill{display:inline-block;background:var(--soft);color:var(--primary-d);border-radius:999px;
-  padding:3px 10px;font-size:12px;font-weight:700;margin-right:6px;}
+.nav .in .btn{flex:1;}
 .muted{color:var(--mute);font-size:12.5px;}
 .dev-group{margin-bottom:14px;}
 .dev-group h3{font-size:13px;color:var(--mute);margin:0 0 8px;font-weight:700;}
@@ -64,24 +62,47 @@ textarea{min-height:76px;resize:vertical;}
   border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:700;margin:10px 0;}
 .tot.ok{background:#E7F8F4;color:#0a7c69;}
 .tot.over{background:#FFEDE9;color:#C0392B;}
-.stage{position:relative;width:100%;background:#F4F2EC;border-radius:12px;overflow:hidden;
-  display:flex;justify-content:center;align-items:center;padding:12px 0;}
-canvas.prev{touch-action:none;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.13);background:#fff;}
-.ctrl{margin-top:10px;}
-.ctrl label{display:block;font-size:12.5px;font-weight:700;margin:8px 0 3px;color:var(--mute);}
-input[type=range]{width:100%;}
-.layers{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px;}
-.lay{padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;
-  font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;font-family:inherit;}
-.lay.on{border-color:var(--primary);background:var(--soft);color:var(--primary-d);}
-.lay.add{color:var(--primary);border-style:dashed;}
-.sw{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
-.sw button{width:38px;height:38px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;}
+
+/* --- 写真エディタ（通常版に準拠） --- */
+.modeltag{display:inline-block;background:#F4F2EC;color:var(--mute);border-radius:8px;
+  padding:4px 10px;font-size:11.5px;font-weight:700;margin-bottom:8px;letter-spacing:.02em;}
+.stage{display:flex;justify-content:center;padding:6px 0 2px;}
+.case{position:relative;touch-action:none;}
+.case canvas{display:block;box-shadow:0 4px 16px rgba(0,0,0,.14);}
+.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;color:#9a958c;font-size:13px;font-weight:700;gap:6px;pointer-events:none;}
+.camnote{text-align:center;font-size:11.5px;color:var(--mute);margin:6px 0 10px;}
+.ctrl{display:flex;align-items:center;gap:8px;margin:6px 0;}
+.rnd{width:42px;height:42px;flex:0 0 auto;border-radius:50%;border:1px solid var(--line);
+  background:#fff;color:var(--ink);font-size:17px;font-weight:800;cursor:pointer;line-height:1;
+  display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.rnd:disabled{opacity:.35;}
+.rnd.danger{color:#C0392B;border-color:#F3B4AB;}
+.range{flex:1;min-width:0;}
+.order{display:flex;align-items:center;gap:8px;margin:4px 0 10px;}
+.mini{padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;
+  font-size:12.5px;font-weight:700;color:var(--ink);cursor:pointer;font-family:inherit;}
+.mini:disabled{opacity:.4;}
+.order .hint{font-size:11.5px;color:var(--mute);margin-left:auto;}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px;}
+.thumb{width:56px;height:56px;padding:0;border:2px solid var(--line);border-radius:10px;
+  overflow:hidden;background:#fff;cursor:pointer;}
+.thumb.on{border-color:var(--primary);box-shadow:0 0 0 2px rgba(242,80,63,.2);}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.addtile{width:56px;height:56px;border:2px dashed var(--line);border-radius:10px;background:#fff;
+  color:var(--primary);font-size:11px;font-weight:800;cursor:pointer;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:1px;font-family:inherit;}
+.addtile b{font-size:18px;line-height:1;}
+.bgrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px;}
+.bglabel{font-size:12.5px;font-weight:700;color:var(--mute);}
+.sw{display:flex;flex-wrap:wrap;gap:8px;}
+.sw button{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;}
 .sw button.on{border-color:var(--primary);box-shadow:0 0 0 2px rgba(242,80,63,.2);}
 .file{display:block;padding:26px 12px;border:2px dashed var(--line);border-radius:12px;text-align:center;
   color:var(--mute);font-size:14px;background:#fff;cursor:pointer;font-weight:700;}
+.file span{display:block;font-size:11.5px;font-weight:400;margin-top:4px;}
 .dlist .card{display:flex;gap:12px;align-items:center;}
-.dlist canvas{width:56px;border-radius:6px;border:1px solid var(--line);flex:0 0 auto;background:#fff;}
+.dlist canvas{width:56px;border-radius:6px;flex:0 0 auto;background:#fff;}
 .dlist .info{flex:1;min-width:0;}
 .dlist .info b{display:block;font-size:14px;}
 .dlist .info span{font-size:12px;color:var(--mute);}
@@ -92,12 +113,11 @@ table.sum td:first-child{color:var(--mute);width:38%;}
 .err{background:#FFEDE9;color:#C0392B;border-radius:10px;padding:10px 12px;font-size:13px;margin:10px 0;font-weight:700;}
 .ok-box{text-align:center;padding:26px 10px;}
 .ok-box .big{font-size:44px;}
-.ok-box h2{font-size:19px;}
 .load{display:flex;align-items:center;gap:10px;justify-content:center;color:var(--mute);font-size:13px;}
 .spin{width:18px;height:18px;border:3px solid #E7E2D8;border-top-color:var(--primary);
   border-radius:50%;animation:sp .8s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg);}}
-.hint{background:#FFF9F0;border:1px solid #F0E2C8;border-radius:10px;padding:10px 12px;font-size:12.5px;margin:10px 0;}
+.hint-box{background:#FFF9F0;border:1px solid #F0E2C8;border-radius:10px;padding:10px 12px;font-size:12.5px;margin:10px 0;}
 footer{text-align:center;color:var(--mute);font-size:11.5px;padding:22px 12px 6px;}
 </style>
 </head>
@@ -106,26 +126,27 @@ footer{text-align:center;color:var(--mute);font-size:11.5px;padding:22px 12px 6p
   <h1>LOCO-P リターン入稿</h1>
   <p>CAMPFIRE でご支援いただいた方専用のデザイン受付フォームです</p>
 </div></header>
-
 <div class="wrap">
   <div class="steps" id="steps"></div>
   <div class="stepname" id="stepname"></div>
   <div id="view"></div>
 </div>
-
 <div class="nav" id="nav"><div class="in"></div></div>
 <footer>LOCO-P（株式会社さむらい）｜山口県下関市<br>お問い合わせ：mihara@kihoukai.or.jp</footer>
 
 <script>
 /* ===================================================================
    LOCO-P CAMPFIRE リターン入稿アプリ
+   ケース作成の操作感・描画は通常版アプリと同じ仕様に揃えています。
    --- 変更が必要になったら、この設定ブロックだけ直せばOK ---
    =================================================================== */
-var IMGBB_KEY   = "dd1bf14593abaa5519ccffd61a022aab";
-var W3F_KEY     = "b113d10b-f725-49e9-b41b-b8a401260d53";
-var SHOP_NAME   = "LOCO-P（株式会社さむらい）";
-var MAX_LONG    = 1300;   // 仕上がり画像の長辺(px)
-var MAX_PHOTOS  = 5;      // 1つのケースに置ける写真の枚数（通常版と同じ）
+var IMGBB_KEY = "dd1bf14593abaa5519ccffd61a022aab";
+var W3F_KEY   = "b113d10b-f725-49e9-b41b-b8a401260d53";
+var SHOP_NAME = "LOCO-P（株式会社さむらい）";
+var OUT_LONG  = 1300;   // 仕上がり画像の長辺(px)
+var MAX_PHOTOS = 5;     // 1つのケースに置ける写真の枚数
+var MIN_SCALE = 0.15, MAX_SCALE = 4;   // 拡大縮小の範囲
+var STAGE_H   = 360;    // 編集プレビューの高さ
 
 /* リターン一覧（CAMPFIREのリターンと対応） */
 var REWARDS = [
@@ -140,11 +161,11 @@ var REWARDS = [
   { id:"r300000", label:"300,000円｜先行設置オーナー候補枠",       cases:0,  sheets:0,  noItem:"担当より個別にご案内します。デザインの入稿は不要です。" }
 ];
 
-/* 機種リスト（通常版アプリと同じ。機種追加はここに1行足すだけ） */
+/* 機種リスト（通常版と同じ。機種追加はここに1行足すだけ） */
 var ISL = { x:0.05, y:0.05, w:0.40, h:0.21, r:0.06 };
 var DEVICES = [
   { label:"iPhone", models:[
-    { name:"iPhone SE（第2/3世代）", tag:"iPhone SE-MCC-B",      ratio:0.49, cam:"single",   island:{x:0.055,y:0.04,w:0.30,h:0.075,r:0.5} },
+    { name:"iPhone SE（第2/3世代）", tag:"iPhone SE-MCC-B",  ratio:0.49, cam:"single",   island:{x:0.055,y:0.04,w:0.30,h:0.075,r:0.5} },
     { name:"iPhone 12",          tag:"iPhone 12-MCC-B",       ratio:0.48, cam:"two-vert", island:{x:0.05,y:0.05,w:0.34,h:0.16,r:0.06} },
     { name:"iPhone 13 / 14",     tag:"iPhone 13/14-MCC-B",    ratio:0.48, cam:"two-diag", island:ISL },
     { name:"iPhone 15",          tag:"iPhone 15-MCC-B",       ratio:0.47, cam:"two-diag", island:ISL },
@@ -170,11 +191,17 @@ var DEVICES = [
 ];
 var PALETTE = ["#FFFFFF","#000000","#3FA9F5","#FF8FB1","#19C3A6","#FFE08A","#F4F2EC"];
 
-/* ---------- 機種ユーティリティ ---------- */
+/* ===== 共通ユーティリティ ===== */
 function allModels(){ var a=[]; DEVICES.forEach(function(g){ g.models.forEach(function(m){ a.push(m); }); }); return a; }
 function findModel(tag){ var r=null; allModels().forEach(function(m){ if(m.tag===tag) r=m; }); return r; }
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function uid(){ return "L"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function dist(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
+function angle(a,b){ return Math.atan2(b.y-a.y, b.x-a.x)*180/Math.PI; }
+function mid(a,b){ return { x:(a.x+b.x)/2, y:(a.y+b.y)/2 }; }
+function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 
-/* ---------- 背景色の名前 ---------- */
 function bgName(c){
   var h=(c==null?"":(""+c)).trim().toUpperCase();
   if(h.charAt(0)!=="#")h="#"+h;
@@ -195,139 +222,114 @@ function bgName(c){
   return nm;
 }
 
-/* ---------- カメラ島の描画（通常版アプリと同一のコード） ---------- */
+/* ===== 描画（通常版アプリと同一のロジック） ===== */
+var FRAME = { x:0.035, y:0.025, w:0.93, h:0.95 };   // 印刷される枠
+function frameOf(W,H){ return { x:FRAME.x*W, y:FRAME.y*H, w:FRAME.w*W, h:FRAME.h*H }; }
+
 function ql(a,e,t,l,u,f){f=Math.min(f,l/2,u/2),a.moveTo(e+f,t),a.arcTo(e+l,t,e+l,t+u,f),a.arcTo(e+l,t+u,e,t+u,f),a.arcTo(e,t+u,e,t,f),a.arcTo(e,t,e+l,t,f),a.closePath()}
 function Ku(a,e,t,l,u,f){a.beginPath(),ql(a,e,t,l,u,f)}
+function Rn(a,e,t,l,u,f,o){f=Math.min(f,l/2,u/2),o=Math.min(o,l/2,u/2),a.moveTo(e+f,t),a.lineTo(e+l,t),a.lineTo(e+l,t+u-o),a.arcTo(e+l,t+u,e+l-o,t+u,o),a.lineTo(e,t+u),a.lineTo(e,t+f),a.arcTo(e,t,e+f,t,f),a.closePath()}
 function Xg(a,e,t,l,u){let f=l*.6;ql(a,e,t,f,u,f*.5),ql(a,e+l*.3,t,l*.7,u*.42,l*.16)}
+function Vg(a,e,t,l,u,f,o,d){let s=f*.6;Rn(a,e,t,l+s-e,u+o-t,d,s*.5);let i=l+f*.3,m=l+f,h=u+o*.42;ql(a,i,t,m-i,h-t,f*.14)}
 function Ya(a,e,t,l){a.beginPath(),a.arc(e,t,l,0,7),a.fillStyle="#2f2f34",a.fill(),a.lineWidth=Math.max(2,l*.22),a.strokeStyle="rgba(150,150,156,0.7)",a.stroke()}
 function Le(a,e,t,l,u){a.beginPath(),a.arc(e,t,l,0,7),a.fillStyle=u,a.fill()}
 function Yg(a,e,t,l,u){let f=e.x*l,o=e.y*u,d=e.w*l,s=e.h*u,i=e.r*l;if(a.save(),t==="galaxy"){a.beginPath(),Xg(a,f,o,d,s),a.fillStyle="rgba(236,234,228,0.96)",a.fill();let m=f+d*.3;Ya(a,m,o+s*.19,d*.21),Ya(a,m,o+s*.47,d*.18),Ya(a,m,o+s*.73,d*.18),Le(a,f+d*.66,o+s*.13,s*.03,"#cfcfd4"),Le(a,f+d*.62,o+s*.25,s*.018,"#888"),a.restore();return}if(Ku(a,f,o,d,s,i),a.fillStyle="rgba(236,234,228,0.96)",a.fill(),a.lineWidth=Math.max(1,l*.005),a.strokeStyle="rgba(0,0,0,0.12)",a.stroke(),t==="two-diag"){let m=s*.26;Ya(a,f+d*.3,o+s*.34,m),Ya(a,f+d*.62,o+s*.68,m),Le(a,f+d*.66,o+s*.26,s*.07,"#9aa"),Le(a,f+d*.3,o+s*.7,s*.05,"#777")}else if(t==="two-vert"){let m=s*.24;Ya(a,f+d*.34,o+s*.32,m),Ya(a,f+d*.34,o+s*.7,m),Le(a,f+d*.68,o+s*.3,s*.07,"#9aa"),Le(a,f+d*.68,o+s*.62,s*.05,"#777")}else if(t==="three"){let m=s*.26;Ya(a,f+d*.3,o+s*.3,m),Ya(a,f+d*.3,o+s*.7,m),Ya(a,f+d*.6,o+s*.5,m),Le(a,f+d*.8,o+s*.3,s*.07,"#9aa"),Le(a,f+d*.82,o+s*.62,s*.05,"#777")}else if(t==="wide"){let m=s*.24;Ya(a,f+d*.16,o+s*.3,m),Ya(a,f+d*.16,o+s*.7,m),Ya(a,f+d*.34,o+s*.5,m),Ku(a,f+d*.56,o+s*.16,d*.34,s*.68,s*.18),a.fillStyle="rgba(60,60,66,0.85)",a.fill(),Le(a,f+d*.73,o+s*.36,s*.1,"#cfcfd4"),Le(a,f+d*.73,o+s*.64,s*.08,"#222")}else if(t==="single"){let m=s*.38;Ya(a,f+d*.22,o+s*.5,m),Le(a,f+d*.46,o+s*.40,s*.09,"#9aa"),Le(a,f+d*.46,o+s*.66,s*.05,"#777")}else if(t==="pixel"){let m=s*.33;Ya(a,f+d*.30,o+s*.5,m),Ya(a,f+d*.55,o+s*.5,m),Le(a,f+d*.80,o+s*.5,s*.11,"#cfcfd4")}a.restore()}
 
-/* ---------- 1デザインをキャンバスに合成 ---------- */
-function drawDesign(ctx, d, W, H){
-  var m = findModel(d.deviceTag);
-  ctx.save();
-  Ku(ctx, 0, 0, W, H, W*0.11);
-  ctx.clip();
-  ctx.fillStyle = d.bg; ctx.fillRect(0,0,W,H);
-  (d.layers||[]).forEach(function(L){
-    if(!L.img) return;
-    var base = Math.min(W/L.iw, H/L.ih) * L.scale;
-    ctx.save();
-    ctx.translate(W*(0.5+L.fx), H*(0.5+L.fy));
-    ctx.rotate(L.rot*Math.PI/180);
-    ctx.drawImage(L.img, -L.iw*base/2, -L.ih*base/2, L.iw*base, L.ih*base);
-    ctx.restore();
+/* 本体レンダラ（通常版の dL と同じ） */
+function renderCase(a, e){
+  var t=e.layers, l=e.bg, u=e.W, f=e.H, o=e.radius, d=e.island, s=e.cam, i=e.withCam, m=e.selectedId;
+  a.save(); Ku(a,0,0,u,f,o); a.clip();
+  a.fillStyle="#F4F2EC"; a.fillRect(0,0,u,f);
+  var h=frameOf(u,f), p=Math.min(h.w,h.h)*.06;
+  var x=d.x*u, y=d.y*f, D=d.w*u, B=d.h*f, r=d.r*u, n=x+D-h.x, L=y+B-h.y;
+  a.save(); a.beginPath(); ql(a,h.x,h.y,h.w,h.h,p); a.clip();
+  a.fillStyle=l||"#ffffff"; a.fillRect(0,0,u,f);
+  t.forEach(function(I){
+    if(!I.img) return;
+    var b=Math.min(h.w/I.iw, h.h/I.ih)*I.relScale;
+    var T=h.x+h.w*(.5+I.fx), O=h.y+h.h*(.5+I.fy);
+    a.save(); a.translate(T,O); a.rotate(I.rot*Math.PI/180); a.scale(b,b);
+    a.drawImage(I.img, -I.iw/2, -I.ih/2, I.iw, I.ih); a.restore();
   });
-  if(m) Yg(ctx, m.island, m.cam, W, H);
-  ctx.restore();
-  ctx.save();
-  Ku(ctx, 0.5, 0.5, W-1, H-1, W*0.11);
-  ctx.lineWidth = 1; ctx.strokeStyle = "rgba(0,0,0,0.18)"; ctx.stroke();
-  ctx.restore();
+  if(m){
+    var sel=null; t.forEach(function(A){ if(A.id===m) sel=A; });
+    if(sel && sel.img){
+      var A2=Math.min(h.w/sel.iw, h.h/sel.ih), b2=A2*sel.relScale;
+      var T2=h.x+h.w*(.5+sel.fx), O2=h.y+h.h*(.5+sel.fy);
+      a.save(); a.translate(T2,O2); a.rotate(sel.rot*Math.PI/180);
+      var U=sel.iw*b2/2, Ba=sel.ih*b2/2;
+      a.setLineDash([6,4]); a.lineWidth=2; a.strokeStyle="#FF6B5E";
+      a.strokeRect(-U,-Ba,U*2,Ba*2); a.restore();
+    }
+  }
+  a.setLineDash([]); a.beginPath();
+  if(s==="galaxy") Vg(a,h.x,h.y,x,y,D,B,p); else Rn(a,h.x,h.y,n,L,p,r);
+  a.fillStyle="#F4F2EC"; a.fill(); a.restore();
+  a.setLineDash([]); a.beginPath(); ql(a,h.x,h.y,h.w,h.h,p);
+  if(s!=="galaxy") Rn(a,h.x,h.y,n,L,p,r);
+  a.lineWidth=Math.max(1,u*.006); a.strokeStyle="rgba(0,0,0,0.10)"; a.stroke();
+  a.restore();
+  if(i && d) Yg(a,d,s,u,f);
+  var S=Math.max(2,u*.016);
+  a.lineWidth=S; a.strokeStyle="rgba(255,255,255,0.7)";
+  Ku(a,S/2,S/2,u-S,f-S,o); a.stroke();
 }
 
-/* ---------- タップした位置にある写真を判定（通常版と同じ方式） ---------- */
-function hitLayer(d, W, H, px, py){
-  var Ls = d.layers || [];
-  for(var i = Ls.length-1; i >= 0; i--){
-    var L = Ls[i]; if(!L.img) continue;
-    var base = Math.min(W/L.iw, H/L.ih) * L.scale;
-    var cx = W*(0.5+L.fx), cy = H*(0.5+L.fy);
-    var dx = px-cx, dy = py-cy, a = -L.rot*Math.PI/180;
-    var rx = dx*Math.cos(a) - dy*Math.sin(a);
-    var ry = dx*Math.sin(a) + dy*Math.cos(a);
-    if(Math.abs(rx/base) <= L.iw/2 && Math.abs(ry/base) <= L.ih/2) return L.id;
+/* タップした位置にある写真を判定（通常版の Zg と同じ） */
+function hitLayer(layers, px, py, fr){
+  for(var s=layers.length-1; s>=0; s--){
+    var i=layers[s]; if(!i.img) continue;
+    var h=Math.min(fr.w/i.iw, fr.h/i.ih)*i.relScale;
+    var p=fr.x+fr.w*(.5+i.fx), x=fr.y+fr.h*(.5+i.fy);
+    var y=px-p, D=py-x, B=-i.rot*Math.PI/180;
+    var r=y*Math.cos(B)-D*Math.sin(B), n=y*Math.sin(B)+D*Math.cos(B);
+    if(Math.abs(r/h)<=i.iw/2 && Math.abs(n/h)<=i.ih/2) return i.id;
   }
   return null;
 }
-function selLayer(d){
-  var Ls = d.layers || [], hit = null;
-  Ls.forEach(function(L){ if(L.id === d.sel) hit = L; });
-  return hit || Ls[Ls.length-1] || null;
+function drawThumb(cv, d, W){
+  var m = findModel(d.deviceTag);
+  var H = Math.round(W/(m?m.ratio:0.47));
+  cv.width=W; cv.height=H; cv.style.height="auto";
+  renderCase(cv.getContext("2d"), { layers:d.layers, bg:d.bg, W:W, H:H, radius:W*0.11,
+    island:m?m.island:ISL, cam:m?m.cam:"two-vert", withCam:true, selectedId:null });
 }
 
-/* ---------- 画像読み込み（iPhoneの回転補正 + 縮小） ---------- */
-function loadImage(file){
-  return new Promise(function(resolve, reject){
-    var done = function(src){
-      var im = new Image();
-      im.onload = function(){
-        var mx = 1600, w = im.naturalWidth, h = im.naturalHeight;
-        var sc = Math.min(1, mx/Math.max(w,h));
-        if(sc < 1){
-          var c = document.createElement("canvas");
-          c.width = Math.round(w*sc); c.height = Math.round(h*sc);
-          c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
-          var im2 = new Image();
-          im2.onload = function(){ resolve(im2); };
-          im2.src = c.toDataURL("image/jpeg", 0.92);
-        } else resolve(im);
-      };
-      im.onerror = function(){ reject(new Error("画像を読み込めませんでした")); };
-      im.src = src;
-    };
-    if(window.createImageBitmap){
-      createImageBitmap(file, { imageOrientation:"from-image" }).then(function(bm){
-        var c = document.createElement("canvas");
-        var mx = 1600, sc = Math.min(1, mx/Math.max(bm.width, bm.height));
-        c.width = Math.round(bm.width*sc); c.height = Math.round(bm.height*sc);
-        c.getContext("2d").drawImage(bm, 0, 0, c.width, c.height);
-        done(c.toDataURL("image/jpeg", 0.92));
-      }).catch(function(){
-        var r = new FileReader();
-        r.onload = function(){ done(r.result); };
-        r.onerror = function(){ reject(new Error("読み込み失敗")); };
-        r.readAsDataURL(file);
-      });
-    } else {
-      var r = new FileReader();
-      r.onload = function(){ done(r.result); };
-      r.onerror = function(){ reject(new Error("読み込み失敗")); };
-      r.readAsDataURL(file);
-    }
-  });
-}
-
-/* =================== 状態 =================== */
+/* ===== 状態 ===== */
 var S = {
-  step: 0,
-  reward: null,
-  backer: { name:"", email:"" },
-  cases: [],        // [{tag, qty}]
-  designs: [],      // [{id, deviceTag, qty, bg, img, iw, ih, scale, fx, fy, rot, origSrc}]
-  edit: null,       // 編集中デザイン
-  ship: { name:"", zip:"", addr:"", method:"LINE", contact:"", notes:"" },
-  sending:false, sent:false, orderNo:"", error:""
+  step:0, reward:null,
+  backer:{ name:"", email:"" },
+  cases:[], designs:[], edit:null,
+  ship:{ name:"", zip:"", addr:"", method:"LINE", contact:"", notes:"" },
+  sending:false, sent:false, orderNo:"", error:"", loading:false, msg:""
 };
 var STEP_NAMES = ["支援内容の確認","ケース本体の機種","デザインの作成","お届け先","内容の確認"];
+var $view=document.getElementById("view"), $nav=document.getElementById("nav").firstElementChild;
+var $steps=document.getElementById("steps"), $sname=document.getElementById("stepname");
 
-var $view = document.getElementById("view");
-var $nav  = document.getElementById("nav").firstElementChild;
-var $steps= document.getElementById("steps");
-var $sname= document.getElementById("stepname");
-
-function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g, function(c){
-  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 function totalCases(){ var n=0; S.cases.forEach(function(c){ n+=c.qty; }); return n; }
 function totalSheets(){ var n=0; S.designs.forEach(function(d){ n+=d.qty; }); return n; }
+/* ケース本体で選んだ機種だけをシートの対象にする（間違い防止） */
+function allowedModels(){
+  var seen={}, out=[];
+  S.cases.forEach(function(c){ if(!seen[c.tag]){ seen[c.tag]=1; var m=findModel(c.tag); if(m) out.push(m); } });
+  return out;
+}
 
-/* =================== 画面描画 =================== */
 function render(){
   if(S.sent){ renderDone(); return; }
-  var vis = S.reward && S.reward.noItem ? 1 : 5;
-  $steps.innerHTML = "";
+  $steps.innerHTML="";
   for(var i=0;i<5;i++){
-    var e = document.createElement("div");
+    var e=document.createElement("div");
     e.className = i===S.step ? "on" : (i<S.step ? "done" : "");
     $steps.appendChild(e);
   }
-  $sname.textContent = "STEP " + (S.step+1) + " / 5 ・ " + STEP_NAMES[S.step];
+  $sname.textContent = "STEP "+(S.step+1)+" / 5 ・ "+STEP_NAMES[S.step];
   ({0:stepBacker,1:stepCases,2:stepDesigns,3:stepShip,4:stepConfirm})[S.step]();
   window.scrollTo(0,0);
 }
 
-/* ---------- STEP1 支援者情報 ---------- */
+/* ---------- STEP1 ---------- */
 function stepBacker(){
   var h = '<h2><span class="num">1</span>ご支援内容の確認</h2>'
     + '<p class="lead">CAMPFIREでご支援いただいた内容を教えてください。お名前と、<b>ご支援時に登録されたメールアドレス</b>で照合いたします。</p>'
@@ -335,7 +337,7 @@ function stepBacker(){
     + '<input type="text" id="bname" value="'+esc(S.backer.name)+'" placeholder="山口 太郎">'
     + '<label class="f">ご支援時のメールアドレス</label>'
     + '<input type="email" id="bmail" value="'+esc(S.backer.email)+'" placeholder="example@mail.com">'
-    + '<label class="f">選んだリターン</label><div id="rw">';
+    + '<label class="f">選んだリターン</label>';
   REWARDS.forEach(function(r){
     h += '<div class="card '+(S.reward&&S.reward.id===r.id?"sel":"")+'" data-r="'+r.id+'" style="padding:12px;margin-bottom:8px;cursor:pointer">'
       + '<b style="font-size:14px">'+esc(r.label)+'</b>'
@@ -343,264 +345,328 @@ function stepBacker(){
       + (r.one ? '<div class="muted" style="margin-top:3px">全て同じデザインでお作りします</div>' : '')
       + '</div>';
   });
-  h += '</div>';
-  if(S.reward && S.reward.noItem){
-    h += '<div class="hint">このプランはデザインの入稿が不要です。ご支援ありがとうございます！ご不明な点は mihara@kihoukai.or.jp までご連絡ください。</div>';
-  }
+  if(S.reward && S.reward.noItem)
+    h += '<div class="hint-box">このプランはデザインの入稿が不要です。ご支援ありがとうございます！ご不明な点は mihara@kihoukai.or.jp までご連絡ください。</div>';
   $view.innerHTML = h;
-  document.getElementById("bname").oninput = function(e){ S.backer.name = e.target.value; navUpdate(); };
-  document.getElementById("bmail").oninput = function(e){ S.backer.email = e.target.value; navUpdate(); };
+  document.getElementById("bname").oninput=function(e){ S.backer.name=e.target.value; navUpdate(); };
+  document.getElementById("bmail").oninput=function(e){ S.backer.email=e.target.value; navUpdate(); };
   [].forEach.call(document.querySelectorAll("[data-r]"), function(el){
-    el.onclick = function(){
-      var r = null; REWARDS.forEach(function(x){ if(x.id===el.getAttribute("data-r")) r=x; });
-      S.reward = r; S.cases = []; S.designs = [];
-      render();
+    el.onclick=function(){
+      var r=null; REWARDS.forEach(function(x){ if(x.id===el.getAttribute("data-r")) r=x; });
+      S.reward=r; S.cases=[]; S.designs=[]; render();
     };
   });
   nav(null, "次へ", function(){ S.step=1; render(); }, canNext1());
 }
-function canNext1(){
-  return !!(S.backer.name.trim() && /@/.test(S.backer.email) && S.reward && !S.reward.noItem);
-}
+function canNext1(){ return !!(S.backer.name.trim() && /@/.test(S.backer.email) && S.reward && !S.reward.noItem); }
 
-/* ---------- STEP2 ケース本体の機種 ---------- */
+/* ---------- STEP2 ---------- */
 function stepCases(){
-  var need = S.reward.cases, now = totalCases();
-  var h = '<h2><span class="num">2</span>ケース本体の機種</h2>'
-    + '<p class="lead">ケース本体は <b>'+need+'コ</b> です。お使いの機種ごとに個数を指定してください。ご家族やお友だちで機種が違っても大丈夫です。</p>'
+  var need=S.reward.cases, now=totalCases();
+  var h='<h2><span class="num">2</span>ケース本体の機種</h2>'
+    + '<p class="lead">ケース本体は <b>'+need+'コ</b> です。お使いの機種ごとに個数を指定してください。ご家族やお友だちで機種が違っても大丈夫です。<br><b>ここで選んだ機種が、次のシート作成でそのまま使われます。</b></p>'
     + '<div class="tot '+(now===need?"ok":(now>need?"over":""))+'"><span>指定済み</span><span>'+now+' / '+need+' コ</span></div>';
-  S.cases.forEach(function(c, i){
-    var m = findModel(c.tag);
+  S.cases.forEach(function(c,i){
+    var m=findModel(c.tag);
     h += '<div class="card"><b style="font-size:14px">'+esc(m?m.name:"?")+'</b>'
-      + '<div class="cnt" style="margin-top:8px">'
-      + '<button data-cm="'+i+'">−</button><div class="v">'+c.qty+'コ</div><button data-cp="'+i+'">＋</button>'
+      + '<div class="cnt" style="margin-top:8px"><button data-cm="'+i+'">−</button>'
+      + '<div class="v">'+c.qty+'コ</div><button data-cp="'+i+'">＋</button>'
       + '<button class="del" data-cd="'+i+'" style="margin-left:auto;background:none;border:0;color:#C0392B;font-weight:700;cursor:pointer">削除</button>'
       + '</div></div>';
   });
-  h += '<button class="btn ghost sm" id="addcase" style="margin-top:6px">＋ 機種を追加する</button>'
-     + '<div id="picker"></div>';
-  $view.innerHTML = h;
-  [].forEach.call(document.querySelectorAll("[data-cp]"), function(b){ b.onclick=function(){ S.cases[+b.getAttribute("data-cp")].qty++; render(); }; });
-  [].forEach.call(document.querySelectorAll("[data-cm]"), function(b){ b.onclick=function(){ var i=+b.getAttribute("data-cm"); if(S.cases[i].qty>1)S.cases[i].qty--; render(); }; });
-  [].forEach.call(document.querySelectorAll("[data-cd]"), function(b){ b.onclick=function(){ S.cases.splice(+b.getAttribute("data-cd"),1); render(); }; });
-  document.getElementById("addcase").onclick = function(){ showPicker(function(tag){
+  h += '<button class="btn ghost sm" id="addcase" style="margin-top:6px">＋ 機種を追加する</button><div id="picker"></div>';
+  $view.innerHTML=h;
+  [].forEach.call(document.querySelectorAll("[data-cp]"),function(b){ b.onclick=function(){ S.cases[+b.getAttribute("data-cp")].qty++; render(); }; });
+  [].forEach.call(document.querySelectorAll("[data-cm]"),function(b){ b.onclick=function(){ var i=+b.getAttribute("data-cm"); if(S.cases[i].qty>1)S.cases[i].qty--; render(); }; });
+  [].forEach.call(document.querySelectorAll("[data-cd]"),function(b){ b.onclick=function(){ S.cases.splice(+b.getAttribute("data-cd"),1); S.designs=[]; render(); }; });
+  document.getElementById("addcase").onclick=function(){ showPicker(function(tag){
     var hit=false; S.cases.forEach(function(c){ if(c.tag===tag){ c.qty++; hit=true; } });
-    if(!hit) S.cases.push({tag:tag, qty:1});
+    if(!hit) S.cases.push({tag:tag,qty:1});
     render();
   }); };
-  nav("戻る", "次へ", function(){ S.step=2; render(); }, now===need, function(){ S.step=0; render(); });
+  nav("戻る","次へ",function(){ S.step=2; render(); }, now===need, function(){ S.step=0; render(); });
 }
-
 function showPicker(cb){
-  var p = document.getElementById("picker");
-  var h = '<div class="card" style="margin-top:10px"><b style="font-size:14px">機種を選ぶ</b>';
+  var p=document.getElementById("picker");
+  var h='<div class="card" style="margin-top:10px"><b style="font-size:14px">機種を選ぶ</b>';
   DEVICES.forEach(function(g){
-    h += '<div class="dev-group" style="margin-top:12px"><h3>'+esc(g.label)+'</h3><div class="dev-grid">';
-    g.models.forEach(function(m){ h += '<div class="dev" data-pk="'+esc(m.tag)+'">'+esc(m.name)+'</div>'; });
-    h += '</div></div>';
+    h+='<div class="dev-group" style="margin-top:12px"><h3>'+esc(g.label)+'</h3><div class="dev-grid">';
+    g.models.forEach(function(m){ h+='<div class="dev" data-pk="'+esc(m.tag)+'">'+esc(m.name)+'</div>'; });
+    h+='</div></div>';
   });
-  h += '</div>';
-  p.innerHTML = h;
-  [].forEach.call(p.querySelectorAll("[data-pk]"), function(el){
-    el.onclick = function(){ cb(el.getAttribute("data-pk")); };
-  });
-  if(p.scrollIntoView) p.scrollIntoView({behavior:"smooth", block:"start"});
+  p.innerHTML=h+'</div>';
+  [].forEach.call(p.querySelectorAll("[data-pk]"),function(el){ el.onclick=function(){ cb(el.getAttribute("data-pk")); }; });
+  if(p.scrollIntoView) p.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-/* ---------- STEP3 デザイン作成 ---------- */
+/* ---------- STEP3 一覧 ---------- */
 function stepDesigns(){
   if(S.edit){ renderEditor(); return; }
-  var need = S.reward.sheets, now = totalSheets();
-  var h = '<h2><span class="num">3</span>着せ替えシートのデザイン</h2>'
+  var need=S.reward.sheets, now=totalSheets();
+  var h='<h2><span class="num">3</span>着せ替えシートのデザイン</h2>'
     + '<p class="lead">シートは全部で <b>'+need+'枚</b> です。'
-    + (S.reward.one ? '同じデザインで'+need+'枚お作りします。' : 'デザインを作って「何枚作るか」を指定してください。同じデザインを複数枚でも、別々のデザインでもOKです。')
+    + (S.reward.one ? '同じデザインで'+need+'枚お作りします。' : 'デザインを作って「何枚作るか」を指定してください。')
     + '</p>'
-    + '<div class="tot '+(now===need?"ok":(now>need?"over":""))+'"><span>作成済み</span><span>'+now+' / '+need+' 枚</span></div>'
-    + '<div class="dlist">';
-  S.designs.forEach(function(d, i){
-    var m = findModel(d.deviceTag);
-    h += '<div class="card"><canvas id="th'+i+'" width="100" height="200"></canvas>'
-      + '<div class="info"><b>デザイン'+(i+1)+'（'+d.qty+'枚）</b>'
-      + '<span>'+esc(m?m.name:"?")+'／写真'+d.layers.length+'枚／背景 '+esc(bgName(d.bg))+'</span></div>'
+    + '<div class="tot '+(now===need?"ok":(now>need?"over":""))+'"><span>作成済み</span><span>'+now+' / '+need+' 枚</span></div><div class="dlist">';
+  S.designs.forEach(function(d,i){
+    var m=findModel(d.deviceTag);
+    h+='<div class="card"><canvas id="th'+i+'"></canvas><div class="info">'
+      + '<b>デザイン'+(i+1)+'（'+d.qty+'枚）</b><span>'+esc(m?m.name:"?")+'／写真'+d.layers.length+'枚／背景 '+esc(bgName(d.bg))+'</span></div>'
       + '<div style="display:flex;flex-direction:column;gap:4px">'
       + '<button class="del" data-ed="'+i+'" style="color:#0a7c69">編集</button>'
       + '<button class="del" data-dd="'+i+'">削除</button></div></div>';
   });
-  h += '</div>';
-  if(now < need) h += '<button class="btn ghost sm" id="adddes" style="margin-top:6px">＋ デザインを作る</button>';
-  $view.innerHTML = h;
-  S.designs.forEach(function(d, i){
-    var c = document.getElementById("th"+i);
-    var m = findModel(d.deviceTag);
-    var W = 100, H = Math.round(W / (m ? m.ratio : 0.47));
-    c.width = W; c.height = H; c.style.height = "auto";
-    drawDesign(c.getContext("2d"), d, W, H);
-  });
-  var add = document.getElementById("adddes");
-  if(add) add.onclick = function(){ startDesign(); };
-  [].forEach.call(document.querySelectorAll("[data-dd]"), function(b){ b.onclick=function(){ S.designs.splice(+b.getAttribute("data-dd"),1); render(); }; });
-  [].forEach.call(document.querySelectorAll("[data-ed]"), function(b){ b.onclick=function(){ S.edit = S.designs[+b.getAttribute("data-ed")]; S.edit._idx = +b.getAttribute("data-ed"); render(); }; });
-  nav("戻る", "次へ", function(){ S.step=3; render(); }, now===need, function(){ S.step=1; render(); });
+  h+='</div>';
+  if(now<need) h+='<button class="btn ghost sm" id="adddes" style="margin-top:6px">＋ デザインを作る</button>';
+  $view.innerHTML=h;
+  S.designs.forEach(function(d,i){ drawThumb(document.getElementById("th"+i), d, 100); });
+  var add=document.getElementById("adddes"); if(add) add.onclick=startDesign;
+  [].forEach.call(document.querySelectorAll("[data-dd]"),function(b){ b.onclick=function(){ S.designs.splice(+b.getAttribute("data-dd"),1); render(); }; });
+  [].forEach.call(document.querySelectorAll("[data-ed]"),function(b){ b.onclick=function(){
+    var i=+b.getAttribute("data-ed"); S.edit=S.designs[i]; S.edit._idx=i; render(); }; });
+  nav("戻る","次へ",function(){ S.step=3; render(); }, now===need, function(){ S.step=1; render(); });
 }
-
 function startDesign(){
-  var tag = S.cases.length ? S.cases[0].tag : allModels()[0].tag;
-  var rest = S.reward.sheets - totalSheets();
-  S.edit = { id:Date.now(), deviceTag:tag, qty: S.reward.one ? S.reward.sheets : Math.min(1, rest),
-             bg:"#FFFFFF", layers:[], sel:null, _idx:-1 };
-  if(S.reward.one) S.edit.qty = S.reward.sheets;
-  render();
+  var al=allowedModels();
+  var rest=S.reward.sheets-totalSheets();
+  S.edit={ id:uid(), deviceTag:(al[0]?al[0].tag:allModels()[0].tag),
+           qty:(S.reward.one?S.reward.sheets:Math.min(1,rest)),
+           bg:"#FFFFFF", layers:[], sel:null, _idx:-1 };
+  S.msg=""; render();
 }
 
+/* ---------- STEP3 エディタ（通常版と同じ操作感） ---------- */
+function curLayer(){
+  var d=S.edit, r=null;
+  d.layers.forEach(function(L){ if(L.id===d.sel) r=L; });
+  return r;
+}
 function renderEditor(){
-  var d = S.edit, m = findModel(d.deviceTag);
-  var rest = S.reward.sheets - totalSheets() + (d._idx>=0 ? S.designs[d._idx].qty : 0);
-  var L = selLayer(d);
-  var h = '<h2><span class="num">3</span>デザインを作る</h2>'
-    + '<label class="f">1. 機種</label><select id="dv">';
-  DEVICES.forEach(function(g){
-    h += '<optgroup label="'+esc(g.label)+'">';
-    g.models.forEach(function(mm){ h += '<option value="'+esc(mm.tag)+'" '+(mm.tag===d.deviceTag?"selected":"")+'>'+esc(mm.name)+'</option>'; });
-    h += '</optgroup>';
-  });
-  h += '</select><label class="f">2. 写真 <span>（最大'+MAX_PHOTOS+'枚まで重ねられます）</span></label>';
+  var d=S.edit, m=findModel(d.deviceTag), al=allowedModels();
+  var rest=S.reward.sheets-totalSheets()+(d._idx>=0?S.designs[d._idx].qty:0);
+  var sel=curLayer();
+  var h='<h2><span class="num">3</span>デザインを作る</h2>';
 
-  if(!d.layers.length){
-    h += '<label class="file" for="fi">📷 タップして写真を選ぶ</label>';
+  /* 機種：ケース本体で選んだものだけ */
+  h+='<label class="f">機種 <span>（ケース本体で選んだ機種から選べます）</span></label>';
+  if(al.length<=1){
+    h+='<div class="card" style="padding:12px;margin-bottom:4px"><b style="font-size:14px">'+esc(m?m.name:"?")+'</b></div>';
   } else {
-    h += '<div class="stage"><canvas class="prev" id="pv"></canvas></div>'
-      + '<div class="muted" style="margin:8px 0 4px">※ 写真をタップすると選べます。指でドラッグして位置を調整してください。</div>'
-      + '<div class="layers">';
-    d.layers.forEach(function(x, i){
-      h += '<button class="lay '+(L && x.id===L.id ? "on" : "")+'" data-ly="'+x.id+'">写真'+(i+1)+'</button>';
-    });
-    if(d.layers.length < MAX_PHOTOS) h += '<button class="lay add" id="addph">＋ 追加</button>';
-    h += '</div>';
-    if(L){
-      h += '<div class="ctrl">'
-        + '<label>大きさ（写真'+(d.layers.indexOf(L)+1)+'）</label><input type="range" id="sc" min="20" max="320" value="'+Math.round(L.scale*100)+'">'
-        + '<label>回転（写真'+(d.layers.indexOf(L)+1)+'）</label><input type="range" id="rt" min="-180" max="180" value="'+L.rot+'">'
-        + '<div class="row" style="margin-top:8px">'
-        + '<button class="btn ghost sm" id="front">前面に出す</button>'
-        + '<button class="btn ghost sm" id="rst">位置リセット</button>'
-        + '<button class="btn ghost sm" id="delph" style="color:#C0392B;border-color:#F3B4AB">この写真を削除</button>'
-        + '</div></div>';
-    }
-    h += '<label class="f">3. 背景色 <span>（写真のない余白の色）</span></label><div class="sw" id="sw"></div>'
-      + '<div style="margin-top:8px"><label class="f">その他の色</label><input type="color" id="cc" value="'+esc(d.bg)+'" style="width:100%;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff"></div>';
-    if(!S.reward.one){
-      h += '<label class="f">4. このデザインを何枚つくりますか？ <span>（残り '+rest+' 枚）</span></label>'
-        + '<div class="cnt"><button id="qm">−</button><div class="v">'+d.qty+'枚</div><button id="qp">＋</button></div>';
-    } else {
-      h += '<div class="hint" style="margin-top:14px">このプランは同じデザインで '+S.reward.sheets+' 枚お作りします。</div>';
-    }
+    h+='<div class="dev-grid" style="margin-bottom:4px">';
+    al.forEach(function(mm){ h+='<div class="dev '+(mm.tag===d.deviceTag?"on":"")+'" data-md="'+esc(mm.tag)+'">'+esc(mm.name)+'</div>'; });
+    h+='</div>';
   }
-  h += '<input type="file" id="fi" accept="image/*" style="display:none">';
-  $view.innerHTML = h;
+  h+='<div class="modeltag">'+esc(d.deviceTag)+'</div>';
 
-  document.getElementById("dv").onchange = function(e){ d.deviceTag = e.target.value; renderEditor(); };
-  var fi = document.getElementById("fi");
-  fi.onchange = function(e){
-    var f = e.target.files && e.target.files[0]; if(!f) return;
-    e.target.value = "";
-    if(d.layers.length >= MAX_PHOTOS){ alert("写真は最大"+MAX_PHOTOS+"枚までです。"); return; }
-    loadImage(f).then(function(im){
-      var c = document.createElement("canvas");
-      c.width = im.naturalWidth || im.width; c.height = im.naturalHeight || im.height;
-      c.getContext("2d").drawImage(im, 0, 0);
-      var lay = { id: Date.now() + Math.floor(Math.random()*999), img: im,
-                  iw: c.width, ih: c.height, scale: 1, fx: 0, fy: 0, rot: 0,
-                  origSrc: c.toDataURL("image/jpeg", 0.9) };
-      d.layers.push(lay); d.sel = lay.id;
-      renderEditor();
-    }).catch(function(){ alert("写真を読み込めませんでした。別の写真をお試しください。"); });
-  };
-  var lbl = document.querySelector("label.file");
-  if(lbl) lbl.onclick = function(ev){ ev.preventDefault(); fi.click(); };
-  var addph = document.getElementById("addph");
-  if(addph) addph.onclick = function(){ fi.click(); };
+  h+='<p class="lead">写真をタップで選択 → 1本指で移動、<b>2本指でつまんで拡大・縮小・回転</b>。＋で写真を組み合わせられます。</p>';
 
-  [].forEach.call(document.querySelectorAll("[data-ly]"), function(b){
-    b.onclick = function(){ d.sel = +b.getAttribute("data-ly"); renderEditor(); };
+  var m2=m||allModels()[0];
+  var HH=Math.min(STAGE_H, Math.round((window.innerHeight||700)*0.44));
+  var WW=Math.round(HH*m2.ratio);
+  h+='<div class="stage"><div class="case" id="case" style="width:'+WW+'px;height:'+HH+'px;border-radius:'+(WW*0.11)+'px">'
+    + '<canvas id="pv" style="width:'+WW+'px;height:'+HH+'px;border-radius:'+(WW*0.11)+'px"></canvas>'
+    + (d.layers.length?'':'<div class="empty">📷<span>写真がここに入ります</span></div>')
+    + '</div></div>'
+    + '<p class="camnote">カメラ部分はクリア（印刷なし）。それ以外の枠の中に画像が入ります。</p>';
+
+  h+='<div class="ctrl">'
+    + '<button class="rnd" id="zo" '+(sel?"":"disabled")+' aria-label="縮小">−</button>'
+    + '<input class="range" type="range" id="rg" min="'+MIN_SCALE+'" max="'+MAX_SCALE+'" step="0.01" value="'+(sel?sel.relScale:1)+'" '+(sel?"":"disabled")+'>'
+    + '<button class="rnd" id="zi" '+(sel?"":"disabled")+' aria-label="拡大">＋</button>'
+    + '<button class="rnd" id="rot" '+(sel?"":"disabled")+' aria-label="90度回転">⟳</button>'
+    + '<button class="rnd danger" id="del" '+(sel?"":"disabled")+' aria-label="削除">🗑</button>'
+    + '</div>'
+    + '<div class="order">'
+    + '<button class="mini" id="front" '+(sel?"":"disabled")+'>前面へ</button>'
+    + '<button class="mini" id="back" '+(sel?"":"disabled")+'>背面へ</button>'
+    + '<span class="hint">'+(sel?"選択中の写真を操作します":"写真をタップで選択")+'</span>'
+    + '</div>'
+    + '<div class="thumbs">';
+  d.layers.forEach(function(L){
+    h+='<button class="thumb'+(L.id===d.sel?" on":"")+'" data-ly="'+L.id+'"><img src="'+L.src+'" alt=""></button>';
   });
+  if(d.layers.length<MAX_PHOTOS)
+    h+='<button class="addtile" id="addph"><b>＋</b><span>追加</span></button>';
+  h+='</div>';
+  if(!d.layers.length)
+    h+='<label class="file" id="drop">📷 写真をアップロード<span>タップして選ぶ／複数選択OK</span></label>';
+  if(S.msg) h+='<div class="err">'+esc(S.msg)+'</div>';
 
-  if(d.layers.length && L){
-    var sw = document.getElementById("sw");
-    PALETTE.forEach(function(col){
-      var b = document.createElement("button");
-      b.style.background = col; b.className = (col.toUpperCase()===d.bg.toUpperCase() ? "on" : "");
-      b.onclick = function(){ d.bg = col; renderEditor(); };
-      sw.appendChild(b);
-    });
-    document.getElementById("cc").oninput = function(e){ d.bg = e.target.value; paint(); };
-    document.getElementById("sc").oninput = function(e){ L.scale = (+e.target.value)/100; paint(); };
-    document.getElementById("rt").oninput = function(e){ L.rot = +e.target.value; paint(); };
-    document.getElementById("rst").onclick = function(){ L.scale=1; L.fx=0; L.fy=0; L.rot=0; renderEditor(); };
-    document.getElementById("front").onclick = function(){
-      var i = d.layers.indexOf(L);
-      if(i > -1){ d.layers.splice(i,1); d.layers.push(L); }
-      renderEditor();
-    };
-    document.getElementById("delph").onclick = function(){
-      var i = d.layers.indexOf(L);
-      if(i > -1) d.layers.splice(i,1);
-      d.sel = d.layers.length ? d.layers[d.layers.length-1].id : null;
-      renderEditor();
-    };
-    if(!S.reward.one){
-      document.getElementById("qp").onclick = function(){ if(d.qty < rest){ d.qty++; renderEditor(); } };
-      document.getElementById("qm").onclick = function(){ if(d.qty > 1){ d.qty--; renderEditor(); } };
-    }
-    setupCanvas();
+  h+='<label class="f">背景色 <span>（写真のない余白の色）</span></label>'
+    + '<div class="bgrow"><div class="sw" id="sw"></div></div>'
+    + '<div style="margin-top:10px"><input type="color" id="cc" value="'+esc(d.bg)+'" style="width:100%;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff"></div>';
+
+  if(!S.reward.one){
+    h+='<label class="f">このデザインを何枚つくりますか？ <span>（残り '+rest+' 枚）</span></label>'
+      + '<div class="cnt"><button id="qm">−</button><div class="v">'+d.qty+'枚</div><button id="qp">＋</button></div>';
+  } else {
+    h+='<div class="hint-box" style="margin-top:14px">このプランは同じデザインで '+S.reward.sheets+' 枚お作りします。</div>';
   }
-  var okLabel = (d._idx>=0 ? "この内容で更新" : "このデザインを追加");
-  nav("やめる", okLabel, function(){
-    if(d._idx >= 0) S.designs[d._idx] = d; else S.designs.push(d);
-    S.edit = null; render();
-  }, d.layers.length > 0, function(){ S.edit = null; render(); });
+  h+='<input type="file" id="fi" accept="image/*" multiple style="display:none">';
+  $view.innerHTML=h;
+
+  [].forEach.call(document.querySelectorAll("[data-md]"),function(el){
+    el.onclick=function(){ d.deviceTag=el.getAttribute("data-md"); renderEditor(); }; });
+
+  var fi=document.getElementById("fi");
+  fi.onchange=function(e){ addFiles(e.target.files); e.target.value=""; };
+  var drop=document.getElementById("drop"); if(drop) drop.onclick=function(){ fi.click(); };
+  var addph=document.getElementById("addph"); if(addph) addph.onclick=function(){ fi.click(); };
+  [].forEach.call(document.querySelectorAll("[data-ly]"),function(b){
+    b.onclick=function(){ d.sel=b.getAttribute("data-ly"); renderEditor(); }; });
+
+  var sw=document.getElementById("sw");
+  PALETTE.forEach(function(col){
+    var b=document.createElement("button");
+    b.style.background=col; b.className=(col.toUpperCase()===d.bg.toUpperCase()?"on":"");
+    b.onclick=function(){ d.bg=col; renderEditor(); };
+    sw.appendChild(b);
+  });
+  document.getElementById("cc").oninput=function(e){ d.bg=e.target.value; paint(); };
+
+  if(sel){
+    document.getElementById("zi").onclick=function(){ sel.relScale=clamp(sel.relScale+0.12,MIN_SCALE,MAX_SCALE); syncRange(); paint(); };
+    document.getElementById("zo").onclick=function(){ sel.relScale=clamp(sel.relScale-0.12,MIN_SCALE,MAX_SCALE); syncRange(); paint(); };
+    document.getElementById("rg").oninput=function(e){ sel.relScale=clamp(parseFloat(e.target.value),MIN_SCALE,MAX_SCALE); paint(); };
+    document.getElementById("rot").onclick=function(){ sel.rot=(sel.rot+90)%360; paint(); };
+    document.getElementById("del").onclick=function(){
+      d.layers=d.layers.filter(function(L){ return L.id!==sel.id; });
+      d.sel=d.layers.length?d.layers[d.layers.length-1].id:null; renderEditor(); };
+    document.getElementById("front").onclick=function(){
+      d.layers=d.layers.filter(function(L){ return L.id!==sel.id; }).concat([sel]); renderEditor(); };
+    document.getElementById("back").onclick=function(){
+      d.layers=[sel].concat(d.layers.filter(function(L){ return L.id!==sel.id; })); renderEditor(); };
+  }
+  if(!S.reward.one){
+    document.getElementById("qp").onclick=function(){ if(d.qty<rest){ d.qty++; renderEditor(); } };
+    document.getElementById("qm").onclick=function(){ if(d.qty>1){ d.qty--; renderEditor(); } };
+  }
+  setupStage(WW,HH);
+  nav("やめる",(d._idx>=0?"この内容で更新":"このデザインを追加"),function(){
+    if(d._idx>=0) S.designs[d._idx]=d; else S.designs.push(d);
+    S.edit=null; S.msg=""; render();
+  }, d.layers.length>0, function(){ S.edit=null; S.msg=""; render(); });
+}
+function syncRange(){ var r=document.getElementById("rg"), s=curLayer(); if(r&&s) r.value=s.relScale; }
+
+/* 写真の追加（複数同時OK・通常版と同じ初期配置） */
+function addFiles(files){
+  var d=S.edit;
+  var list=[].slice.call(files||[]).filter(function(f){ return f && (!f.type || f.type.indexOf("image/")===0); });
+  var room=MAX_PHOTOS-d.layers.length;
+  var use=list.slice(0,room);
+  S.msg="";
+  if(!use.length){ S.msg = room<=0 ? ("写真は最大"+MAX_PHOTOS+"枚までです。") : "画像ファイルを選んでください。"; renderEditor(); return; }
+  if(list.length>room) S.msg="写真は最大"+MAX_PHOTOS+"枚まで。"+room+"枚を追加しました。";
+  var left=use.length, added=[];
+  var done=function(){
+    left-=1;
+    if(left===0){
+      added.forEach(function(L){ d.layers.push(L); });
+      if(added.length) d.sel=added[added.length-1].id;
+      renderEditor();
+    }
+  };
+  var fr=frameOf(100,Math.round(100/(findModel(d.deviceTag)||{ratio:.47}).ratio));
+  use.forEach(function(f){
+    var rd=new FileReader();
+    rd.onload=function(ev){
+      var src=ev.target.result, im=new Image();
+      im.onload=function(){
+        var iw=im.naturalWidth||im.width, ih=im.naturalHeight||im.height;
+        var first=(d.layers.length+added.length)===0, rel=1;
+        if(first){
+          var cover=Math.max(fr.w/iw, fr.h/ih), contain=Math.min(fr.w/iw, fr.h/ih);
+          rel=clamp(cover/contain, MIN_SCALE, MAX_SCALE);
+        }
+        var n=d.layers.length+added.length;
+        var off=first?0:clamp(0.07*n,0,0.26);
+        added.push({ id:uid(), src:src, img:im, iw:iw, ih:ih, fx:off, fy:off, relScale:rel, rot:0 });
+        done();
+      };
+      im.onerror=function(){ S.msg="読み込めない写真がありました（JPEG/PNGでお試しください）。"; done(); };
+      im.src=src;
+    };
+    rd.onerror=function(){ S.msg="ファイルを読み込めませんでした。"; done(); };
+    rd.readAsDataURL(f);
+  });
 }
 
-function setupCanvas(){
-  var d = S.edit, m = findModel(d.deviceTag);
-  var cv = document.getElementById("pv");
-  var maxH = Math.min(window.innerHeight*0.46, 420);
-  var H = Math.round(maxH), W = Math.round(H * m.ratio);
-  var dpr = Math.min(window.devicePixelRatio||1, 2);
-  cv.width = W*dpr; cv.height = H*dpr;
-  cv.style.width = W+"px"; cv.style.height = H+"px";
-  cv._W = W; cv._H = H; cv._dpr = dpr;
-  paint();
-  var drag = null;
-  cv.addEventListener("pointerdown", function(ev){
-    var r = cv.getBoundingClientRect();
-    var px = ev.clientX - r.left, py = ev.clientY - r.top;
-    var hit = hitLayer(d, W, H, px, py);
-    if(hit !== null && hit !== d.sel){ d.sel = hit; renderEditor(); return; }
-    var L = selLayer(d); if(!L) return;
-    drag = { x:ev.clientX, y:ev.clientY, fx:L.fx, fy:L.fy, L:L };
-    cv.setPointerCapture(ev.pointerId);
-  });
-  cv.addEventListener("pointermove", function(ev){
-    if(!drag) return;
-    drag.L.fx = drag.fx + (ev.clientX - drag.x)/cv._W;
-    drag.L.fy = drag.fy + (ev.clientY - drag.y)/cv._H;
-    paint();
-  });
-  cv.addEventListener("pointerup", function(){ drag = null; });
-  cv.addEventListener("pointercancel", function(){ drag = null; });
+/* キャンバス＋ジェスチャー（1本指=移動／2本指=拡大縮小・回転） */
+var PT=new Map(), GEST=null, STG={W:0,H:0};
+function setupStage(W,H){
+  STG.W=W; STG.H=H;
+  var box=document.getElementById("case"), cv=document.getElementById("pv");
+  var dpr=Math.min(2, window.devicePixelRatio||1);
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  cv._dpr=dpr; paint();
+  PT.clear(); GEST=null;
+  var fr=frameOf(W,H);
+  box.onpointerdown=function(ev){
+    box.setPointerCapture(ev.pointerId);
+    PT.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
+    var d=S.edit;
+    if(PT.size===1){
+      var r=box.getBoundingClientRect();
+      var id=hitLayer(d.layers, ev.clientX-r.left, ev.clientY-r.top, fr);
+      if(id){
+        var L=null; d.layers.forEach(function(x){ if(x.id===id) L=x; });
+        if(d.sel!==id){ d.sel=id; renderEditor(); return; }
+        GEST={mode:"drag", L:L, sx:ev.clientX, sy:ev.clientY, fx:L.fx, fy:L.fy};
+      } else { if(d.sel!==null){ d.sel=null; renderEditor(); } GEST=null; }
+    } else if(PT.size===2){
+      var L2=curLayer() || d.layers[d.layers.length-1];
+      if(L2){
+        d.sel=L2.id;
+        var p=[].slice.call(PT.values()), c=mid(p[0],p[1]);
+        GEST={mode:"pinch", L:L2, d0:dist(p[0],p[1]), a0:angle(p[0],p[1]),
+              mx:c.x, my:c.y, rel0:L2.relScale, rot0:L2.rot, fx:L2.fx, fy:L2.fy};
+      }
+    }
+  };
+  box.onpointermove=function(ev){
+    if(!PT.has(ev.pointerId)) return;
+    PT.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
+    if(!GEST) return;
+    if(GEST.mode==="drag"){
+      GEST.L.fx=clamp(GEST.fx+(ev.clientX-GEST.sx)/fr.w,-0.5,0.5);
+      GEST.L.fy=clamp(GEST.fy+(ev.clientY-GEST.sy)/fr.h,-0.5,0.5);
+      paint();
+    } else if(GEST.mode==="pinch"){
+      var p=[].slice.call(PT.values()); if(p.length<2) return;
+      var c=mid(p[0],p[1]);
+      GEST.L.relScale=clamp(GEST.rel0*(dist(p[0],p[1])/GEST.d0), MIN_SCALE, MAX_SCALE);
+      var rr=GEST.rot0+(angle(p[0],p[1])-GEST.a0);
+      GEST.L.rot=((rr%360)+360)%360;
+      GEST.L.fx=clamp(GEST.fx+(c.x-GEST.mx)/fr.w,-0.5,0.5);
+      GEST.L.fy=clamp(GEST.fy+(c.y-GEST.my)/fr.h,-0.5,0.5);
+      syncRange(); paint();
+    }
+  };
+  var up=function(ev){
+    PT.delete(ev.pointerId);
+    if(PT.size===0){ GEST=null; }
+    else if(PT.size===1 && GEST){
+      var p=[].slice.call(PT.values())[0], L=GEST.L;
+      if(L) GEST={mode:"drag", L:L, sx:p.x, sy:p.y, fx:L.fx, fy:L.fy};
+    }
+  };
+  box.onpointerup=up; box.onpointercancel=up;
 }
 function paint(){
-  var cv = document.getElementById("pv"); if(!cv) return;
-  var ctx = cv.getContext("2d");
+  var cv=document.getElementById("pv"); if(!cv) return;
+  var d=S.edit, m=findModel(d.deviceTag)||allModels()[0];
+  var ctx=cv.getContext("2d");
   ctx.setTransform(cv._dpr,0,0,cv._dpr,0,0);
-  ctx.clearRect(0,0,cv._W,cv._H);
-  drawDesign(ctx, S.edit, cv._W, cv._H);
+  ctx.clearRect(0,0,STG.W,STG.H);
+  renderCase(ctx,{ layers:d.layers, bg:d.bg, W:STG.W, H:STG.H, radius:STG.W*0.11,
+    island:m.island, cam:m.cam, withCam:true, selectedId:d.sel });
 }
 
-/* ---------- STEP4 お届け先 ---------- */
+/* ---------- STEP4 ---------- */
 function stepShip(){
-  var s = S.ship;
-  var h = '<h2><span class="num">4</span>お届け先</h2>'
+  var s=S.ship;
+  $view.innerHTML='<h2><span class="num">4</span>お届け先</h2>'
     + '<p class="lead">完成したケースとシートをお送りする先を教えてください。</p>'
     + '<label class="f">お届け先のお名前</label><input type="text" id="sn" value="'+esc(s.name)+'">'
     + '<label class="f">郵便番号</label><input type="text" id="sz" value="'+esc(s.zip)+'" placeholder="750-0000">'
@@ -609,161 +675,153 @@ function stepShip(){
     + ['LINE','電話','メール'].map(function(x){ return '<option '+(s.method===x?"selected":"")+'>'+x+'</option>'; }).join('')
     + '</select>'
     + '<label class="f">ご連絡先 <span>（ID・番号・アドレス）</span></label><input type="text" id="sc2" value="'+esc(s.contact)+'">'
-    + '<label class="f">ご要望 <span>（任意）</span></label><textarea id="sq" placeholder="例）シートは1枚ずつ別デザインでお願いします">'+esc(s.notes)+'</textarea>';
-  $view.innerHTML = h;
-  var bind = function(id, key){ document.getElementById(id).oninput = function(e){ s[key] = e.target.value; navUpdate(); }; };
+    + '<label class="f">ご要望 <span>（任意）</span></label><textarea id="sq">'+esc(s.notes)+'</textarea>';
+  var bind=function(id,k){ document.getElementById(id).oninput=function(e){ s[k]=e.target.value; navUpdate(); }; };
   bind("sn","name"); bind("sz","zip"); bind("sa","addr"); bind("sc2","contact"); bind("sq","notes");
-  document.getElementById("sm").onchange = function(e){ s.method = e.target.value; };
-  nav("戻る", "次へ", function(){ S.step=4; render(); }, canNext4(), function(){ S.step=2; render(); });
+  document.getElementById("sm").onchange=function(e){ s.method=e.target.value; };
+  nav("戻る","次へ",function(){ S.step=4; render(); }, canNext4(), function(){ S.step=2; render(); });
 }
-function canNext4(){ var s=S.ship; return !!(s.name.trim() && s.addr.trim() && s.contact.trim()); }
+function canNext4(){ var s=S.ship; return !!(s.name.trim()&&s.addr.trim()&&s.contact.trim()); }
 
-/* ---------- STEP5 確認・送信 ---------- */
+/* ---------- STEP5 ---------- */
 function stepConfirm(){
-  var h = '<h2><span class="num">5</span>内容の確認</h2>'
-    + (S.error ? '<div class="err">'+esc(S.error)+'</div>' : '')
+  var h='<h2><span class="num">5</span>内容の確認</h2>'
+    + (S.error?'<div class="err">'+esc(S.error)+'</div>':'')
     + '<div class="card"><table class="sum">'
-    + row("お名前", S.backer.name) + row("ご支援メール", S.backer.email)
-    + row("リターン", S.reward.label)
-    + row("ケース本体", S.cases.map(function(c){ var m=findModel(c.tag); return (m?m.name:"?")+" × "+c.qty+"コ"; }).join("<br>"))
-    + row("シート合計", totalSheets()+"枚（デザイン"+S.designs.length+"種類）")
-    + row("お届け先", esc(S.ship.name)+"<br>〒"+esc(S.ship.zip)+"<br>"+esc(S.ship.addr))
-    + row("ご連絡先", S.ship.method+"／"+S.ship.contact)
-    + row("ご要望", S.ship.notes || "なし")
-    + '</table></div>'
-    + '<h2 style="font-size:15px">仕上がりイメージ</h2><div class="dlist">';
+    + row("お名前",esc(S.backer.name)) + row("ご支援メール",esc(S.backer.email))
+    + row("リターン",esc(S.reward.label))
+    + row("ケース本体",S.cases.map(function(c){ var m=findModel(c.tag); return esc(m?m.name:"?")+" × "+c.qty+"コ"; }).join("<br>"))
+    + row("シート合計",totalSheets()+"枚（デザイン"+S.designs.length+"種類）")
+    + row("お届け先",esc(S.ship.name)+"<br>〒"+esc(S.ship.zip)+"<br>"+esc(S.ship.addr))
+    + row("ご連絡先",esc(S.ship.method)+"／"+esc(S.ship.contact))
+    + row("ご要望",esc(S.ship.notes)||"なし")
+    + '</table></div><h2 style="font-size:15px">仕上がりイメージ</h2><div class="dlist">';
   S.designs.forEach(function(d,i){
-    var m = findModel(d.deviceTag);
-    h += '<div class="card"><canvas id="cf'+i+'"></canvas><div class="info"><b>デザイン'+(i+1)+'（'+d.qty+'枚）</b>'
+    var m=findModel(d.deviceTag);
+    h+='<div class="card"><canvas id="cf'+i+'"></canvas><div class="info"><b>デザイン'+(i+1)+'（'+d.qty+'枚）</b>'
       + '<span>'+esc(m?m.name:"?")+'／写真'+d.layers.length+'枚／背景 '+esc(bgName(d.bg))+'</span></div></div>';
   });
-  h += '</div>';
-  if(S.sending) h += '<div class="load" style="margin:14px 0"><div class="spin"></div>送信中です。そのままお待ちください…</div>';
-  else h += '<div class="hint">送信後、内容を確認のうえスタッフよりご連絡いたします。発送は2026年10月を予定しています。</div>';
-  $view.innerHTML = h;
-  S.designs.forEach(function(d,i){
-    var c = document.getElementById("cf"+i); var m = findModel(d.deviceTag);
-    var W = 100, H = Math.round(W/(m?m.ratio:0.47));
-    c.width=W; c.height=H; c.style.height="auto";
-    drawDesign(c.getContext("2d"), d, W, H);
-  });
-  nav("戻る", S.sending ? "送信中…" : "この内容で入稿する", submit, !S.sending, function(){ S.step=3; render(); });
+  h+='</div>';
+  h += S.sending ? '<div class="load" style="margin:14px 0"><div class="spin"></div>送信中です。そのままお待ちください…</div>'
+                 : '<div class="hint-box">送信後、内容を確認のうえスタッフよりご連絡いたします。発送は2026年10月を予定しています。</div>';
+  $view.innerHTML=h;
+  S.designs.forEach(function(d,i){ drawThumb(document.getElementById("cf"+i), d, 100); });
+  nav("戻る",(S.sending?"送信中…":"この内容で入稿する"),submit,!S.sending,function(){ S.step=3; render(); });
 }
 function row(k,v){ return '<tr><td>'+esc(k)+'</td><td>'+(v||"")+'</td></tr>'; }
 
-/* ---------- 完了画面 ---------- */
 function renderDone(){
-  $steps.innerHTML = ""; $sname.textContent = "";
-  $view.innerHTML = '<div class="ok-box"><div class="big">🎉</div>'
-    + '<h2>入稿が完了しました</h2>'
+  $steps.innerHTML=""; $sname.textContent="";
+  $view.innerHTML='<div class="ok-box"><div class="big">🎉</div><h2>入稿が完了しました</h2>'
     + '<p class="lead">受付番号：<b>'+esc(S.orderNo)+'</b></p>'
     + '<p class="lead">ご支援ありがとうございます。内容を確認のうえ、スタッフより折り返しご連絡いたします。この画面は閉じていただいて大丈夫です。</p>'
-    + '<div class="hint" style="text-align:left">発送は2026年10月を予定しています。ご不明な点は mihara@kihoukai.or.jp までお問い合わせください。</div></div>';
-  $nav.innerHTML = "";
+    + '<div class="hint-box" style="text-align:left">発送は2026年10月を予定しています。ご不明な点は mihara@kihoukai.or.jp までお問い合わせください。</div></div>';
+  $nav.innerHTML="";
 }
 
-/* ---------- ナビゲーション ---------- */
-var NAV = {};
-function nav(backLabel, nextLabel, onNext, enabled, onBack){
-  NAV = { onNext:onNext, onBack:onBack };
-  var h = "";
-  if(backLabel) h += '<button class="btn ghost back" id="nb">'+esc(backLabel)+'</button>';
-  h += '<button class="btn" id="nn" '+(enabled?"":"disabled")+'>'+esc(nextLabel)+'</button>';
-  $nav.innerHTML = h;
-  if(backLabel) document.getElementById("nb").onclick = function(){ NAV.onBack && NAV.onBack(); };
-  document.getElementById("nn").onclick = function(){ NAV.onNext && NAV.onNext(); };
+/* ---------- ナビ ---------- */
+var NAV={};
+function nav(back,next,onNext,ok,onBack){
+  NAV={onNext:onNext,onBack:onBack};
+  var h="";
+  if(back) h+='<button class="btn ghost back" id="nb">'+esc(back)+'</button>';
+  h+='<button class="btn" id="nn" '+(ok?"":"disabled")+'>'+esc(next)+'</button>';
+  $nav.innerHTML=h;
+  if(back) document.getElementById("nb").onclick=function(){ NAV.onBack&&NAV.onBack(); };
+  document.getElementById("nn").onclick=function(){ NAV.onNext&&NAV.onNext(); };
 }
 function navUpdate(){
-  var b = document.getElementById("nn"); if(!b) return;
-  var ok = S.step===0 ? canNext1() : (S.step===3 ? canNext4() : true);
-  b.disabled = !ok;
+  var b=document.getElementById("nn"); if(!b) return;
+  b.disabled = !(S.step===0?canNext1():(S.step===3?canNext4():true));
 }
 
 /* ---------- 送信 ---------- */
 function makeNo(){
-  var d = new Date();
-  var p = function(n){ return (n<10?"0":"")+n; };
-  return "CF" + String(d.getFullYear()).slice(2) + p(d.getMonth()+1) + p(d.getDate())
-       + "-" + Math.floor(1000 + Math.random()*9000);
+  var d=new Date(), p=function(n){ return (n<10?"0":"")+n; };
+  return "CF"+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+"-"+Math.floor(1000+Math.random()*9000);
 }
-function composeToDataURL(d){
-  var m = findModel(d.deviceTag);
-  var H = MAX_LONG, W = Math.round(H * m.ratio);
-  var c = document.createElement("canvas"); c.width = W; c.height = H;
-  var ctx = c.getContext("2d");
-  ctx.fillStyle = "#FFFDF8"; ctx.fillRect(0,0,W,H);
-  drawDesign(ctx, d, W, H);
-  return c.toDataURL("image/jpeg", 0.92);
+function composeDataURL(d){
+  var m=findModel(d.deviceTag), H=OUT_LONG, W=Math.round(H*m.ratio);
+  var c=document.createElement("canvas"); c.width=W; c.height=H;
+  var ctx=c.getContext("2d"); ctx.fillStyle="#FFFDF8"; ctx.fillRect(0,0,W,H);
+  renderCase(ctx,{layers:d.layers,bg:d.bg,W:W,H:H,radius:W*0.11,island:m.island,cam:m.cam,withCam:true,selectedId:null});
+  return c.toDataURL("image/jpeg",0.92);
 }
-function upload(dataUrl, name){
-  var fd = new FormData();
-  fd.append("image", dataUrl.split(",")[1]);
-  fd.append("name", name);
-  return fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_KEY, { method:"POST", body:fd })
-    .then(function(r){ if(!r.ok) throw new Error("http-"+r.status); return r.json(); })
-    .then(function(j){ if(!j || !j.success) throw new Error("api-fail"); return j.data.url; });
+function upload(dataUrl,name){
+  var fd=new FormData();
+  fd.append("image",dataUrl.split(",")[1]); fd.append("name",name);
+  return fetch("https://api.imgbb.com/1/upload?key="+IMGBB_KEY,{method:"POST",body:fd})
+    .then(function(r){ if(!r.ok) throw new Error("http"); return r.json(); })
+    .then(function(j){ if(!j||!j.success) throw new Error("api"); return j.data.url; });
 }
 function submit(){
   if(S.sending) return;
-  S.sending = true; S.error = ""; render();
-  var no = makeNo(); S.orderNo = no;
-  var links = [], failed = false;
-  var seq = Promise.resolve();
-  S.designs.forEach(function(d, i){
-    seq = seq.then(function(){
-      return upload(composeToDataURL(d), no+"-d"+(i+1)+"-image")
+  S.sending=true; S.error=""; render();
+  var no=makeNo(); S.orderNo=no;
+  var links=[], failed=false, seq=Promise.resolve();
+  S.designs.forEach(function(d,i){
+    seq=seq.then(function(){
+      return upload(composeDataURL(d), no+"-d"+(i+1)+"-image")
         .then(function(u){ links.push("デザイン"+(i+1)+" 仕上がり："+u); })
         .then(function(){
-          var chain = Promise.resolve();
-          d.layers.forEach(function(L, j){
-            chain = chain.then(function(){
-              return upload(L.origSrc, no+"-d"+(i+1)+"-orig"+(j+1))
+          var ch=Promise.resolve();
+          d.layers.forEach(function(L,j){
+            ch=ch.then(function(){
+              return upload(L.src, no+"-d"+(i+1)+"-orig"+(j+1))
                 .then(function(u2){ links.push("デザイン"+(i+1)+" 元写真"+(j+1)+"："+u2); });
             });
           });
-          return chain;
+          return ch;
         })
-        .catch(function(){ failed = true; });
+        .catch(function(){ failed=true; });
     });
   });
   seq.then(function(){
-    var lines = [];
-    lines.push("【LOCO-P クラファン返礼 入稿】");
-    lines.push("受付番号：" + no);
-    lines.push("■支援者名：" + S.backer.name);
-    lines.push("■ご支援メール：" + S.backer.email);
-    lines.push("■リターン：" + S.reward.label);
-    lines.push("■ケース本体：" + S.cases.map(function(c){ var m=findModel(c.tag); return (m?m.name:"?")+"（"+c.tag+"）× "+c.qty+"コ"; }).join(" ／ "));
-    lines.push("■シート合計：" + totalSheets() + "枚（デザイン" + S.designs.length + "種類）");
-    S.designs.forEach(function(d, i){
-      var m = findModel(d.deviceTag);
-      lines.push("　・デザイン"+(i+1)+"： "+(m?m.name:"?")+"（"+d.deviceTag+"）／"+d.qty+"枚／写真"+d.layers.length+"枚／背景色 "+bgName(d.bg)+"（"+d.bg+"）");
+    var L=[];
+    L.push("【LOCO-P クラファン返礼 入稿】");
+    L.push("受付番号："+no);
+    L.push("■支援者名："+S.backer.name);
+    L.push("■ご支援メール："+S.backer.email);
+    L.push("■リターン："+S.reward.label);
+    L.push("■ケース本体："+S.cases.map(function(c){ var m=findModel(c.tag); return (m?m.name:"?")+"（"+c.tag+"）× "+c.qty+"コ"; }).join(" ／ "));
+    L.push("■シート合計："+totalSheets()+"枚（デザイン"+S.designs.length+"種類）");
+    S.designs.forEach(function(d,i){
+      var m=findModel(d.deviceTag);
+      L.push("　・デザイン"+(i+1)+"： "+(m?m.name:"?")+"（"+d.deviceTag+"）／"+d.qty+"枚／写真"+d.layers.length+"枚／背景色 "+bgName(d.bg)+"（"+d.bg+"）");
     });
-    lines.push("■お届け先：" + S.ship.name + "／〒" + S.ship.zip + "／" + S.ship.addr);
-    lines.push("■ご連絡先：" + S.ship.method + "／" + S.ship.contact);
-    lines.push("■ご要望：" + (S.ship.notes || "なし"));
-    lines.push("（" + SHOP_NAME + "）");
-    lines.push("");
-    if(failed || !links.length){
-      lines.push("※ 画像の自動送信に失敗しました。お客さまに画像を再送いただくか、直接お問い合わせください。");
-    } else {
-      lines.push("―――― 画像リンク（タップで開けます） ――――");
-      links.forEach(function(l){ lines.push(l); });
-    }
-    return fetch("https://api.web3forms.com/submit", {
-      method:"POST", headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ access_key: W3F_KEY, subject:"LOCO-P クラファン返礼 入稿 " + no,
-                             from_name:"LOCO-P リターン入稿フォーム", message: lines.join("\n") })
+    L.push("■お届け先："+S.ship.name+"／〒"+S.ship.zip+"／"+S.ship.addr);
+    L.push("■ご連絡先："+S.ship.method+"／"+S.ship.contact);
+    L.push("■ご要望："+(S.ship.notes||"なし"));
+    L.push("（"+SHOP_NAME+"）");
+    L.push("");
+    if(failed||!links.length) L.push("※ 画像の自動送信に失敗しました。お客さまに画像を再送いただくか、直接お問い合わせください。");
+    else { L.push("―――― 画像リンク（タップで開けます） ――――"); links.forEach(function(x){ L.push(x); }); }
+    return fetch("https://api.web3forms.com/submit",{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ access_key:W3F_KEY, subject:"LOCO-P クラファン返礼 入稿 "+no,
+        from_name:"LOCO-P リターン入稿フォーム", message:L.join("\n") })
     });
   }).then(function(r){
-    if(!r || !r.ok) throw new Error("send");
-    S.sending = false; S.sent = true; render();
+    if(!r||!r.ok) throw new Error("send");
+    S.sending=false; S.sent=true; render();
   }).catch(function(){
-    S.sending = false;
-    S.error = "送信に失敗しました。通信環境をご確認のうえ、もう一度お試しください。繰り返す場合は mihara@kihoukai.or.jp までご連絡ください。";
+    S.sending=false;
+    S.error="送信に失敗しました。通信環境をご確認のうえ、もう一度お試しください。繰り返す場合は mihara@kihoukai.or.jp までご連絡ください。";
     render();
   });
 }
+
+/* 貼り付けでも写真を追加できる（通常版と同じ） */
+window.addEventListener("paste",function(ev){
+  if(!S.edit) return;
+  var fs=[], items=(ev.clipboardData&&ev.clipboardData.items)||[];
+  for(var i=0;i<items.length;i++){
+    if(items[i].type && items[i].type.indexOf("image/")===0){
+      var f=items[i].getAsFile(); if(f) fs.push(f);
+    }
+  }
+  if(fs.length) addFiles(fs);
+});
 
 render();
 </script>
