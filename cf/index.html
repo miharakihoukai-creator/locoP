@@ -70,6 +70,11 @@ canvas.prev{touch-action:none;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,
 .ctrl{margin-top:10px;}
 .ctrl label{display:block;font-size:12.5px;font-weight:700;margin:8px 0 3px;color:var(--mute);}
 input[type=range]{width:100%;}
+.layers{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px;}
+.lay{padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;
+  font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;font-family:inherit;}
+.lay.on{border-color:var(--primary);background:var(--soft);color:var(--primary-d);}
+.lay.add{color:var(--primary);border-style:dashed;}
 .sw{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
 .sw button{width:38px;height:38px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;}
 .sw button.on{border-color:var(--primary);box-shadow:0 0 0 2px rgba(242,80,63,.2);}
@@ -120,6 +125,7 @@ var IMGBB_KEY   = "dd1bf14593abaa5519ccffd61a022aab";
 var W3F_KEY     = "b113d10b-f725-49e9-b41b-b8a401260d53";
 var SHOP_NAME   = "LOCO-P（株式会社さむらい）";
 var MAX_LONG    = 1300;   // 仕上がり画像の長辺(px)
+var MAX_PHOTOS  = 5;      // 1つのケースに置ける写真の枚数（通常版と同じ）
 
 /* リターン一覧（CAMPFIREのリターンと対応） */
 var REWARDS = [
@@ -204,20 +210,41 @@ function drawDesign(ctx, d, W, H){
   Ku(ctx, 0, 0, W, H, W*0.11);
   ctx.clip();
   ctx.fillStyle = d.bg; ctx.fillRect(0,0,W,H);
-  if(d.img){
-    var base = Math.min(W/d.iw, H/d.ih) * d.scale;
+  (d.layers||[]).forEach(function(L){
+    if(!L.img) return;
+    var base = Math.min(W/L.iw, H/L.ih) * L.scale;
     ctx.save();
-    ctx.translate(W*(0.5+d.fx), H*(0.5+d.fy));
-    ctx.rotate(d.rot*Math.PI/180);
-    ctx.drawImage(d.img, -d.iw*base/2, -d.ih*base/2, d.iw*base, d.ih*base);
+    ctx.translate(W*(0.5+L.fx), H*(0.5+L.fy));
+    ctx.rotate(L.rot*Math.PI/180);
+    ctx.drawImage(L.img, -L.iw*base/2, -L.ih*base/2, L.iw*base, L.ih*base);
     ctx.restore();
-  }
+  });
   if(m) Yg(ctx, m.island, m.cam, W, H);
   ctx.restore();
   ctx.save();
   Ku(ctx, 0.5, 0.5, W-1, H-1, W*0.11);
   ctx.lineWidth = 1; ctx.strokeStyle = "rgba(0,0,0,0.18)"; ctx.stroke();
   ctx.restore();
+}
+
+/* ---------- タップした位置にある写真を判定（通常版と同じ方式） ---------- */
+function hitLayer(d, W, H, px, py){
+  var Ls = d.layers || [];
+  for(var i = Ls.length-1; i >= 0; i--){
+    var L = Ls[i]; if(!L.img) continue;
+    var base = Math.min(W/L.iw, H/L.ih) * L.scale;
+    var cx = W*(0.5+L.fx), cy = H*(0.5+L.fy);
+    var dx = px-cx, dy = py-cy, a = -L.rot*Math.PI/180;
+    var rx = dx*Math.cos(a) - dy*Math.sin(a);
+    var ry = dx*Math.sin(a) + dy*Math.cos(a);
+    if(Math.abs(rx/base) <= L.iw/2 && Math.abs(ry/base) <= L.ih/2) return L.id;
+  }
+  return null;
+}
+function selLayer(d){
+  var Ls = d.layers || [], hit = null;
+  Ls.forEach(function(L){ if(L.id === d.sel) hit = L; });
+  return hit || Ls[Ls.length-1] || null;
 }
 
 /* ---------- 画像読み込み（iPhoneの回転補正 + 縮小） ---------- */
@@ -394,7 +421,7 @@ function stepDesigns(){
     var m = findModel(d.deviceTag);
     h += '<div class="card"><canvas id="th'+i+'" width="100" height="200"></canvas>'
       + '<div class="info"><b>デザイン'+(i+1)+'（'+d.qty+'枚）</b>'
-      + '<span>'+esc(m?m.name:"?")+'／背景 '+esc(bgName(d.bg))+'</span></div>'
+      + '<span>'+esc(m?m.name:"?")+'／写真'+d.layers.length+'枚／背景 '+esc(bgName(d.bg))+'</span></div>'
       + '<div style="display:flex;flex-direction:column;gap:4px">'
       + '<button class="del" data-ed="'+i+'" style="color:#0a7c69">編集</button>'
       + '<button class="del" data-dd="'+i+'">削除</button></div></div>';
@@ -420,7 +447,7 @@ function startDesign(){
   var tag = S.cases.length ? S.cases[0].tag : allModels()[0].tag;
   var rest = S.reward.sheets - totalSheets();
   S.edit = { id:Date.now(), deviceTag:tag, qty: S.reward.one ? S.reward.sheets : Math.min(1, rest),
-             bg:"#FFFFFF", img:null, iw:0, ih:0, scale:1, fx:0, fy:0, rot:0, origSrc:null, _idx:-1 };
+             bg:"#FFFFFF", layers:[], sel:null, _idx:-1 };
   if(S.reward.one) S.edit.qty = S.reward.sheets;
   render();
 }
@@ -428,6 +455,7 @@ function startDesign(){
 function renderEditor(){
   var d = S.edit, m = findModel(d.deviceTag);
   var rest = S.reward.sheets - totalSheets() + (d._idx>=0 ? S.designs[d._idx].qty : 0);
+  var L = selLayer(d);
   var h = '<h2><span class="num">3</span>デザインを作る</h2>'
     + '<label class="f">1. 機種</label><select id="dv">';
   DEVICES.forEach(function(g){
@@ -435,21 +463,30 @@ function renderEditor(){
     g.models.forEach(function(mm){ h += '<option value="'+esc(mm.tag)+'" '+(mm.tag===d.deviceTag?"selected":"")+'>'+esc(mm.name)+'</option>'; });
     h += '</optgroup>';
   });
-  h += '</select>'
-    + '<label class="f">2. 写真</label>';
-  if(!d.img){
-    h += '<label class="file" for="fi">📷 タップして写真を選ぶ</label><input type="file" id="fi" accept="image/*" style="display:none">';
+  h += '</select><label class="f">2. 写真 <span>（最大'+MAX_PHOTOS+'枚まで重ねられます）</span></label>';
+
+  if(!d.layers.length){
+    h += '<label class="file" for="fi">📷 タップして写真を選ぶ</label>';
   } else {
     h += '<div class="stage"><canvas class="prev" id="pv"></canvas></div>'
-      + '<div class="ctrl">'
-      + '<label>大きさ</label><input type="range" id="sc" min="30" max="320" value="'+Math.round(d.scale*100)+'">'
-      + '<label>回転</label><input type="range" id="rt" min="-180" max="180" value="'+d.rot+'">'
-      + '<div class="muted" style="margin-top:6px">※ プレビューを指でドラッグすると位置を動かせます。うすいグレーの部分はカメラ穴です。</div>'
-      + '<div class="row" style="margin-top:8px"><button class="btn ghost sm" id="refi">写真を選び直す</button>'
-      + '<button class="btn ghost sm" id="rst">位置をリセット</button></div>'
-      + '<input type="file" id="fi" accept="image/*" style="display:none">'
-      + '</div>'
-      + '<label class="f">3. 背景色 <span>（写真のない余白の色）</span></label><div class="sw" id="sw"></div>'
+      + '<div class="muted" style="margin:8px 0 4px">※ 写真をタップすると選べます。指でドラッグして位置を調整してください。</div>'
+      + '<div class="layers">';
+    d.layers.forEach(function(x, i){
+      h += '<button class="lay '+(L && x.id===L.id ? "on" : "")+'" data-ly="'+x.id+'">写真'+(i+1)+'</button>';
+    });
+    if(d.layers.length < MAX_PHOTOS) h += '<button class="lay add" id="addph">＋ 追加</button>';
+    h += '</div>';
+    if(L){
+      h += '<div class="ctrl">'
+        + '<label>大きさ（写真'+(d.layers.indexOf(L)+1)+'）</label><input type="range" id="sc" min="20" max="320" value="'+Math.round(L.scale*100)+'">'
+        + '<label>回転（写真'+(d.layers.indexOf(L)+1)+'）</label><input type="range" id="rt" min="-180" max="180" value="'+L.rot+'">'
+        + '<div class="row" style="margin-top:8px">'
+        + '<button class="btn ghost sm" id="front">前面に出す</button>'
+        + '<button class="btn ghost sm" id="rst">位置リセット</button>'
+        + '<button class="btn ghost sm" id="delph" style="color:#C0392B;border-color:#F3B4AB">この写真を削除</button>'
+        + '</div></div>';
+    }
+    h += '<label class="f">3. 背景色 <span>（写真のない余白の色）</span></label><div class="sw" id="sw"></div>'
       + '<div style="margin-top:8px"><label class="f">その他の色</label><input type="color" id="cc" value="'+esc(d.bg)+'" style="width:100%;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff"></div>';
     if(!S.reward.one){
       h += '<label class="f">4. このデザインを何枚つくりますか？ <span>（残り '+rest+' 枚）</span></label>'
@@ -458,25 +495,36 @@ function renderEditor(){
       h += '<div class="hint" style="margin-top:14px">このプランは同じデザインで '+S.reward.sheets+' 枚お作りします。</div>';
     }
   }
+  h += '<input type="file" id="fi" accept="image/*" style="display:none">';
   $view.innerHTML = h;
 
   document.getElementById("dv").onchange = function(e){ d.deviceTag = e.target.value; renderEditor(); };
   var fi = document.getElementById("fi");
-  if(fi) fi.onchange = function(e){
+  fi.onchange = function(e){
     var f = e.target.files && e.target.files[0]; if(!f) return;
+    e.target.value = "";
+    if(d.layers.length >= MAX_PHOTOS){ alert("写真は最大"+MAX_PHOTOS+"枚までです。"); return; }
     loadImage(f).then(function(im){
-      d.img = im; d.iw = im.naturalWidth || im.width; d.ih = im.naturalHeight || im.height;
-      d.scale = 1; d.fx = 0; d.fy = 0; d.rot = 0;
-      var c = document.createElement("canvas"); c.width=d.iw; c.height=d.ih;
-      c.getContext("2d").drawImage(im,0,0);
-      d.origSrc = c.toDataURL("image/jpeg", 0.9);
+      var c = document.createElement("canvas");
+      c.width = im.naturalWidth || im.width; c.height = im.naturalHeight || im.height;
+      c.getContext("2d").drawImage(im, 0, 0);
+      var lay = { id: Date.now() + Math.floor(Math.random()*999), img: im,
+                  iw: c.width, ih: c.height, scale: 1, fx: 0, fy: 0, rot: 0,
+                  origSrc: c.toDataURL("image/jpeg", 0.9) };
+      d.layers.push(lay); d.sel = lay.id;
       renderEditor();
-    }).catch(function(err){ alert("写真を読み込めませんでした。別の写真をお試しください。"); });
+    }).catch(function(){ alert("写真を読み込めませんでした。別の写真をお試しください。"); });
   };
-  var refi = document.getElementById("refi"); if(refi) refi.onclick = function(){ fi.click(); };
-  var rst  = document.getElementById("rst");  if(rst)  rst.onclick  = function(){ d.scale=1; d.fx=0; d.fy=0; d.rot=0; renderEditor(); };
+  var lbl = document.querySelector("label.file");
+  if(lbl) lbl.onclick = function(ev){ ev.preventDefault(); fi.click(); };
+  var addph = document.getElementById("addph");
+  if(addph) addph.onclick = function(){ fi.click(); };
 
-  if(d.img){
+  [].forEach.call(document.querySelectorAll("[data-ly]"), function(b){
+    b.onclick = function(){ d.sel = +b.getAttribute("data-ly"); renderEditor(); };
+  });
+
+  if(d.layers.length && L){
     var sw = document.getElementById("sw");
     PALETTE.forEach(function(col){
       var b = document.createElement("button");
@@ -485,8 +533,20 @@ function renderEditor(){
       sw.appendChild(b);
     });
     document.getElementById("cc").oninput = function(e){ d.bg = e.target.value; paint(); };
-    document.getElementById("sc").oninput = function(e){ d.scale = (+e.target.value)/100; paint(); };
-    document.getElementById("rt").oninput = function(e){ d.rot = +e.target.value; paint(); };
+    document.getElementById("sc").oninput = function(e){ L.scale = (+e.target.value)/100; paint(); };
+    document.getElementById("rt").oninput = function(e){ L.rot = +e.target.value; paint(); };
+    document.getElementById("rst").onclick = function(){ L.scale=1; L.fx=0; L.fy=0; L.rot=0; renderEditor(); };
+    document.getElementById("front").onclick = function(){
+      var i = d.layers.indexOf(L);
+      if(i > -1){ d.layers.splice(i,1); d.layers.push(L); }
+      renderEditor();
+    };
+    document.getElementById("delph").onclick = function(){
+      var i = d.layers.indexOf(L);
+      if(i > -1) d.layers.splice(i,1);
+      d.sel = d.layers.length ? d.layers[d.layers.length-1].id : null;
+      renderEditor();
+    };
     if(!S.reward.one){
       document.getElementById("qp").onclick = function(){ if(d.qty < rest){ d.qty++; renderEditor(); } };
       document.getElementById("qm").onclick = function(){ if(d.qty > 1){ d.qty--; renderEditor(); } };
@@ -497,7 +557,7 @@ function renderEditor(){
   nav("やめる", okLabel, function(){
     if(d._idx >= 0) S.designs[d._idx] = d; else S.designs.push(d);
     S.edit = null; render();
-  }, !!d.img, function(){ S.edit = null; render(); });
+  }, d.layers.length > 0, function(){ S.edit = null; render(); });
 }
 
 function setupCanvas(){
@@ -511,14 +571,19 @@ function setupCanvas(){
   cv._W = W; cv._H = H; cv._dpr = dpr;
   paint();
   var drag = null;
-  cv.addEventListener("pointerdown", function(e){
-    drag = { x:e.clientX, y:e.clientY, fx:d.fx, fy:d.fy };
-    cv.setPointerCapture(e.pointerId);
+  cv.addEventListener("pointerdown", function(ev){
+    var r = cv.getBoundingClientRect();
+    var px = ev.clientX - r.left, py = ev.clientY - r.top;
+    var hit = hitLayer(d, W, H, px, py);
+    if(hit !== null && hit !== d.sel){ d.sel = hit; renderEditor(); return; }
+    var L = selLayer(d); if(!L) return;
+    drag = { x:ev.clientX, y:ev.clientY, fx:L.fx, fy:L.fy, L:L };
+    cv.setPointerCapture(ev.pointerId);
   });
-  cv.addEventListener("pointermove", function(e){
+  cv.addEventListener("pointermove", function(ev){
     if(!drag) return;
-    d.fx = drag.fx + (e.clientX - drag.x)/cv._W;
-    d.fy = drag.fy + (e.clientY - drag.y)/cv._H;
+    drag.L.fx = drag.fx + (ev.clientX - drag.x)/cv._W;
+    drag.L.fy = drag.fy + (ev.clientY - drag.y)/cv._H;
     paint();
   });
   cv.addEventListener("pointerup", function(){ drag = null; });
@@ -570,7 +635,7 @@ function stepConfirm(){
   S.designs.forEach(function(d,i){
     var m = findModel(d.deviceTag);
     h += '<div class="card"><canvas id="cf'+i+'"></canvas><div class="info"><b>デザイン'+(i+1)+'（'+d.qty+'枚）</b>'
-      + '<span>'+esc(m?m.name:"?")+'／背景 '+esc(bgName(d.bg))+'</span></div></div>';
+      + '<span>'+esc(m?m.name:"?")+'／写真'+d.layers.length+'枚／背景 '+esc(bgName(d.bg))+'</span></div></div>';
   });
   h += '</div>';
   if(S.sending) h += '<div class="load" style="margin:14px 0"><div class="spin"></div>送信中です。そのままお待ちください…</div>';
@@ -648,8 +713,16 @@ function submit(){
     seq = seq.then(function(){
       return upload(composeToDataURL(d), no+"-d"+(i+1)+"-image")
         .then(function(u){ links.push("デザイン"+(i+1)+" 仕上がり："+u); })
-        .then(function(){ return d.origSrc ? upload(d.origSrc, no+"-d"+(i+1)+"-orig")
-              .then(function(u2){ links.push("デザイン"+(i+1)+" 元写真："+u2); }) : null; })
+        .then(function(){
+          var chain = Promise.resolve();
+          d.layers.forEach(function(L, j){
+            chain = chain.then(function(){
+              return upload(L.origSrc, no+"-d"+(i+1)+"-orig"+(j+1))
+                .then(function(u2){ links.push("デザイン"+(i+1)+" 元写真"+(j+1)+"："+u2); });
+            });
+          });
+          return chain;
+        })
         .catch(function(){ failed = true; });
     });
   });
@@ -664,7 +737,7 @@ function submit(){
     lines.push("■シート合計：" + totalSheets() + "枚（デザイン" + S.designs.length + "種類）");
     S.designs.forEach(function(d, i){
       var m = findModel(d.deviceTag);
-      lines.push("　・デザイン"+(i+1)+"： "+(m?m.name:"?")+"（"+d.deviceTag+"）／"+d.qty+"枚／背景色 "+bgName(d.bg)+"（"+d.bg+"）");
+      lines.push("　・デザイン"+(i+1)+"： "+(m?m.name:"?")+"（"+d.deviceTag+"）／"+d.qty+"枚／写真"+d.layers.length+"枚／背景色 "+bgName(d.bg)+"（"+d.bg+"）");
     });
     lines.push("■お届け先：" + S.ship.name + "／〒" + S.ship.zip + "／" + S.ship.addr);
     lines.push("■ご連絡先：" + S.ship.method + "／" + S.ship.contact);
