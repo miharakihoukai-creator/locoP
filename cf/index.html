@@ -301,7 +301,7 @@ var S = {
   backer:{ name:"", email:"" },
   cases:[], designs:[], edit:null,
   ship:{ name:"", zip:"", addr:"", method:"LINE", contact:"", notes:"" },
-  sending:false, sent:false, orderNo:"", error:"", loading:false, msg:""
+  sending:false, sent:false, orderNo:"", error:"", loading:false, msg:"", imgFailed:false
 };
 var STEP_NAMES = ["支援内容の確認","ケース本体の機種","デザインの作成","お届け先","内容の確認"];
 var $view=document.getElementById("view"), $nav=document.getElementById("nav").firstElementChild;
@@ -715,6 +715,9 @@ function renderDone(){
   $view.innerHTML='<div class="ok-box"><div class="big">🎉</div><h2>入稿が完了しました</h2>'
     + '<p class="lead">受付番号：<b>'+esc(S.orderNo)+'</b></p>'
     + '<p class="lead">ご支援ありがとうございます。内容を確認のうえ、スタッフより折り返しご連絡いたします。この画面は閉じていただいて大丈夫です。</p>'
+    + (S.imgFailed
+        ? '<div class="err" style="text-align:left">お写真の送信だけがうまくいきませんでした。お手数ですが、<b>受付番号を件名に入れて mihara@kihoukai.or.jp へお写真をメールで送って</b>いただけますか。ご注文内容は受け付けております。</div>'
+        : '')
     + '<div class="hint-box" style="text-align:left">発送は2026年10月を予定しています。ご不明な点は mihara@kihoukai.or.jp までお問い合わせください。</div></div>';
   $nav.innerHTML="";
 }
@@ -747,12 +750,44 @@ function composeDataURL(d){
   renderCase(ctx,{layers:d.layers,bg:d.bg,W:W,H:H,radius:W*0.11,island:m.island,cam:m.cam,withCam:true,selectedId:null});
   return c.toDataURL("image/jpeg",0.92);
 }
-function upload(dataUrl,name){
+/* アップロード前に縮小（通常版と同じ。原寸のままだと通信が重く失敗する） */
+function shrink(dataUrl, maxSide, quality){
+  return new Promise(function(res){
+    var im = new Image();
+    im.onload = function(){
+      try{
+        var f = Math.min(1, maxSide/Math.max(im.width, im.height));
+        var w = Math.round(im.width*f), h = Math.round(im.height*f);
+        var c = document.createElement("canvas"); c.width=w; c.height=h;
+        c.getContext("2d").drawImage(im,0,0,w,h);
+        res(c.toDataURL("image/jpeg", quality));
+      }catch(e){ res(dataUrl); }
+    };
+    im.onerror = function(){ res(dataUrl); };
+    im.src = dataUrl;
+  });
+}
+function postImg(dataUrl, name){
   var fd=new FormData();
-  fd.append("image",dataUrl.split(",")[1]); fd.append("name",name);
+  fd.append("image", dataUrl.split(",")[1]); fd.append("name", name);
   return fetch("https://api.imgbb.com/1/upload?key="+IMGBB_KEY,{method:"POST",body:fd})
-    .then(function(r){ if(!r.ok) throw new Error("http"); return r.json(); })
-    .then(function(j){ if(!j||!j.success) throw new Error("api"); return j.data.url; });
+    .then(function(r){ if(!r.ok) throw new Error("http-"+r.status); return r.json(); })
+    .then(function(j){ if(!j||!j.success) throw new Error("api-fail"); return j.data.url; });
+}
+/* 縮小 → 失敗したら段階的にさらに小さくして再挑戦（最大3回） */
+function upload(dataUrl,name){
+  var steps=[[1200,0.78],[900,0.7],[640,0.62]];
+  var attempt=function(i){
+    return shrink(dataUrl, steps[i][0], steps[i][1]).then(function(small){
+      return postImg(small, name);
+    }).catch(function(err){
+      if(i < steps.length-1){
+        return new Promise(function(r){ setTimeout(r, 700*(i+1)); }).then(function(){ return attempt(i+1); });
+      }
+      throw err;
+    });
+  };
+  return attempt(0);
 }
 function submit(){
   if(S.sending) return;
@@ -794,8 +829,13 @@ function submit(){
     L.push("■ご要望："+(S.ship.notes||"なし"));
     L.push("（"+SHOP_NAME+"）");
     L.push("");
-    if(failed||!links.length) L.push("※ 画像の自動送信に失敗しました。お客さまに画像を再送いただくか、直接お問い合わせください。");
-    else { L.push("―――― 画像リンク（タップで開けます） ――――"); links.forEach(function(x){ L.push(x); }); }
+    if(links.length){
+      L.push("―――― 画像リンク（タップで開けます） ――――");
+      links.forEach(function(x){ L.push(x); });
+      if(failed) L.push("※ 一部の画像を送信できませんでした。上記に載っていない画像はお客さまへ再送をご依頼ください。");
+    } else {
+      L.push("※ 画像の自動送信に失敗しました。お客さまに画像を再送いただくか、直接お問い合わせください。");
+    }
     return fetch("https://api.web3forms.com/submit",{
       method:"POST", headers:{"Content-Type":"application/json"},
       body:JSON.stringify({ access_key:W3F_KEY, subject:"LOCO-P クラファン返礼 入稿 "+no,
@@ -803,7 +843,7 @@ function submit(){
     });
   }).then(function(r){
     if(!r||!r.ok) throw new Error("send");
-    S.sending=false; S.sent=true; render();
+    S.sending=false; S.sent=true; S.imgFailed=(failed||!links.length); render();
   }).catch(function(){
     S.sending=false;
     S.error="送信に失敗しました。通信環境をご確認のうえ、もう一度お試しください。繰り返す場合は mihara@kihoukai.or.jp までご連絡ください。";
