@@ -176,7 +176,10 @@ var DEVICES = [
     { name:"iPhone 16 Pro Max",  tag:"iPhone 16ProMax-MCC-B", ratio:0.48, cam:"three",    island:ISL },
     { name:"iPhone 17",          tag:"iPhone 17-MCC-B",       ratio:0.47, cam:"two-vert", island:ISL },
     { name:"iPhone 17 Pro",      tag:"iPhone 17Pro-MCC-B",    ratio:0.47, cam:"wide",     island:{x:0.04,y:0.04,w:0.92,h:0.25,r:0.06} },
-    { name:"iPhone 17 Pro Max",  tag:"iPhone 17ProMax-MCC-B", ratio:0.48, cam:"wide",     island:{x:0.04,y:0.04,w:0.92,h:0.24,r:0.06} }
+    { name:"iPhone 17 Pro Max",  tag:"iPhone 17ProMax-MCC-B", ratio:0.48, cam:"wide",     island:{x:0.04,y:0.04,w:0.92,h:0.24,r:0.06} },
+    // iPhone 18 Pro / 18 Pro Max は着せ替えシートが17 Pro / 17 Pro Maxと共通 → 製作用タグ・形状も同じ
+    { name:"iPhone 18 Pro",      tag:"iPhone 17Pro-MCC-B",    ratio:0.47, cam:"wide",     island:{x:0.04,y:0.04,w:0.92,h:0.25,r:0.06} },
+    { name:"iPhone 18 Pro Max",  tag:"iPhone 17ProMax-MCC-B", ratio:0.48, cam:"wide",     island:{x:0.04,y:0.04,w:0.92,h:0.24,r:0.06} }
   ]},
   { label:"Galaxy", models:[
     { name:"Galaxy S26", tag:"SAMSUNG S26-MCC-B", ratio:0.46, cam:"galaxy", island:{x:0.05,y:0.045,w:0.44,h:0.34,r:0.06} },
@@ -193,7 +196,8 @@ var PALETTE = ["#FFFFFF","#000000","#3FA9F5","#FF8FB1","#19C3A6","#FFE08A","#F4F
 
 /* ===== 共通ユーティリティ ===== */
 function allModels(){ var a=[]; DEVICES.forEach(function(g){ g.models.forEach(function(m){ a.push(m); }); }); return a; }
-function findModel(tag){ var r=null; allModels().forEach(function(m){ if(m.tag===tag) r=m; }); return r; }
+/* 機種は「機種名」で見分ける（製作用タグは18 Pro＝17 Proのように複数機種で共通になるため） */
+function findModel(key){ var r=null; allModels().forEach(function(m){ if(!r && m.name===key) r=m; }); return r; }
 function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 function uid(){ return "L"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 function dist(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
@@ -391,7 +395,7 @@ function showPicker(cb){
   var h='<div class="card" style="margin-top:10px"><b style="font-size:14px">機種を選ぶ</b>';
   DEVICES.forEach(function(g){
     h+='<div class="dev-group" style="margin-top:12px"><h3>'+esc(g.label)+'</h3><div class="dev-grid">';
-    g.models.forEach(function(m){ h+='<div class="dev" data-pk="'+esc(m.tag)+'">'+esc(m.name)+'</div>'; });
+    g.models.forEach(function(m){ h+='<div class="dev" data-pk="'+esc(m.name)+'">'+esc(m.name)+'</div>'; });
     h+='</div></div>';
   });
   p.innerHTML=h+'</div>';
@@ -429,7 +433,7 @@ function stepDesigns(){
 function startDesign(){
   var al=allowedModels();
   var rest=S.reward.sheets-totalSheets();
-  S.edit={ id:uid(), deviceTag:(al[0]?al[0].tag:allModels()[0].tag),
+  S.edit={ id:uid(), deviceTag:(al[0]?al[0].name:allModels()[0].name),
            qty:(S.reward.one?S.reward.sheets:Math.min(1,rest)),
            bg:"#FFFFFF", layers:[], sel:null, _idx:-1 };
   S.msg=""; render();
@@ -453,10 +457,10 @@ function renderEditor(){
     h+='<div class="card" style="padding:12px;margin-bottom:4px"><b style="font-size:14px">'+esc(m?m.name:"?")+'</b></div>';
   } else {
     h+='<div class="dev-grid" style="margin-bottom:4px">';
-    al.forEach(function(mm){ h+='<div class="dev '+(mm.tag===d.deviceTag?"on":"")+'" data-md="'+esc(mm.tag)+'">'+esc(mm.name)+'</div>'; });
+    al.forEach(function(mm){ h+='<div class="dev '+(mm.name===d.deviceTag?"on":"")+'" data-md="'+esc(mm.name)+'">'+esc(mm.name)+'</div>'; });
     h+='</div>';
   }
-  h+='<div class="modeltag">'+esc(d.deviceTag)+'</div>';
+  h+='<div class="modeltag">'+esc(m?m.tag:"")+'</div>';
 
   h+='<p class="lead">写真をタップで選択 → 1本指で移動、<b>2本指でつまんで拡大・縮小・回転</b>。＋で写真を組み合わせられます。</p>';
 
@@ -818,11 +822,11 @@ function submit(){
     L.push("■支援者名："+S.backer.name);
     L.push("■ご支援メール："+S.backer.email);
     L.push("■リターン："+S.reward.label);
-    L.push("■ケース本体："+S.cases.map(function(c){ var m=findModel(c.tag); return (m?m.name:"?")+"（"+c.tag+"）× "+c.qty+"コ"; }).join(" ／ "));
+    L.push("■ケース本体："+S.cases.map(function(c){ var m=findModel(c.tag); return (m?m.name:"?")+"（"+(m?m.tag:"")+"）× "+c.qty+"コ"; }).join(" ／ "));
     L.push("■シート合計："+totalSheets()+"枚（デザイン"+S.designs.length+"種類）");
     S.designs.forEach(function(d,i){
       var m=findModel(d.deviceTag);
-      L.push("　・デザイン"+(i+1)+"： "+(m?m.name:"?")+"（"+d.deviceTag+"）／"+d.qty+"枚／写真"+d.layers.length+"枚／背景色 "+bgName(d.bg)+"（"+d.bg+"）");
+      L.push("　・デザイン"+(i+1)+"： "+(m?m.name:"?")+"（"+(m?m.tag:"")+"）／"+d.qty+"枚／写真"+d.layers.length+"枚／背景色 "+bgName(d.bg)+"（"+d.bg+"）");
     });
     L.push("■お届け先："+S.ship.name+"／〒"+S.ship.zip+"／"+S.ship.addr);
     L.push("■ご連絡先："+S.ship.method+"／"+S.ship.contact);
