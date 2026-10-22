@@ -150,15 +150,17 @@ var STAGE_H   = 360;    // 編集プレビューの高さ
 
 /* リターン一覧（CAMPFIREのリターンと対応） */
 var REWARDS = [
-  { id:"r1000",   label:"1,000円｜LOCO-P応援プラン",              cases:0,  sheets:0,  noItem:"お礼メッセージのみのプランです。デザインの入稿は不要です。" },
-  { id:"r3000",   label:"3,000円｜ケース1コ＋着せ替えシート1枚",   cases:1,  sheets:1 },
-  { id:"r4000",   label:"4,000円｜ケース1コ＋着せ替えシート2枚",   cases:1,  sheets:2 },
-  { id:"r5000",   label:"5,000円｜ケース2コ＋着せ替えシート2枚",   cases:2,  sheets:2 },
-  { id:"r12000",  label:"12,000円｜ケース5コ＋ロゴ入りシート5枚",  cases:5,  sheets:5,  one:true },
-  { id:"r30000",  label:"30,000円｜ケース15コ＋シート15枚",        cases:15, sheets:15 },
-  { id:"r50000",  label:"50,000円｜ケース10コ＋シート30枚",        cases:10, sheets:30 },
-  { id:"r100000", label:"100,000円｜ケース20コ＋シート50枚",       cases:20, sheets:50 },
-  { id:"r300000", label:"300,000円｜先行設置オーナー候補枠",       cases:0,  sheets:0,  noItem:"担当より個別にご案内します。デザインの入稿は不要です。" }
+  /* 第2弾（2026/10/22〜11/30） cases=ケース本体の個数 / sheets=着せ替えシートの枚数
+     cases が 0 のものは「既にケースをお持ちの方」向け → お持ちのケースの機種を聞く */
+  { id:"a2500",  label:"2,500円｜【超早割限定10個】はじめてセット（ケース1コ＋シート1枚）",        cases:1, sheets:1 },
+  { id:"b2500",  label:"2,500円｜【超早割】リピーターセット（シートのみ2枚・ケースをお持ちの方）",  cases:0, sheets:2 },
+  { id:"a2700",  label:"2,700円｜【早割・限定20個】はじめてセット（ケース1コ＋シート1枚）",        cases:1, sheets:1 },
+  { id:"b2800",  label:"2,800円｜【クラファン特別価格】リピーターセット（シートのみ2枚・ケースをお持ちの方）", cases:0, sheets:2 },
+  { id:"a3000",  label:"3,000円｜【通常応援】はじめてセット（ケース1コ＋シート1枚）",              cases:1, sheets:1 },
+  { id:"c3000",  label:"3,000円｜【超早割】着せ替え体験セット（ケース1コ＋シート2枚）",            cases:1, sheets:2 },
+  { id:"c3800",  label:"3,800円｜【早割】着せ替え体験セット（ケース1コ＋シート2枚）",              cases:1, sheets:2 },
+  { id:"c4000",  label:"4,000円｜【クラファン特別価格】着せ替え体験セット（ケース1コ＋シート2枚）", cases:1, sheets:2 },
+  { id:"d5000",  label:"5,000円｜【ペア割り・限定20個】（ケース2コ＋シート2枚）",                  cases:2, sheets:2 }
 ];
 
 /* 機種リスト（通常版と同じ。機種追加はここに1行足すだけ） */
@@ -192,7 +194,7 @@ var DEVICES = [
     { name:"Pixel 10", tag:"Google Pixel10-MCC-B", ratio:0.47, cam:"pixel", island:{x:0.05,y:0.045,w:0.68,h:0.14,r:0.5} }
   ]}
 ];
-var PALETTE = ["#FFFFFF","#000000","#3FA9F5","#FF8FB1","#19C3A6","#FFE08A","#F4F2EC"];
+var PALETTE = ["#FFFFFF","#000000","#3FA9F5","#FF8FB1","#19C3A6","#FFE08A"]; // #F4F2EC はケース地色と同じで「透明」に見えるため外した
 
 /* ===== 共通ユーティリティ ===== */
 function allModels(){ var a=[]; DEVICES.forEach(function(g){ g.models.forEach(function(m){ a.push(m); }); }); return a; }
@@ -307,7 +309,8 @@ var S = {
   ship:{ name:"", zip:"", addr:"", method:"LINE", contact:"", notes:"" },
   sending:false, sent:false, orderNo:"", error:"", loading:false, msg:"", imgFailed:false
 };
-var STEP_NAMES = ["支援内容の確認","ケース本体の機種","デザインの作成","お届け先","内容の確認"];
+var STEP_NAMES = ["支援内容の確認","ケースの機種","デザインの作成","お届け先","内容の確認"];
+function sheetsOnly(){ return !!(S.reward && S.reward.cases===0 && S.reward.sheets>0); }
 var $view=document.getElementById("view"), $nav=document.getElementById("nav").firstElementChild;
 var $steps=document.getElementById("steps"), $sname=document.getElementById("stepname");
 
@@ -366,15 +369,22 @@ function canNext1(){ return !!(S.backer.name.trim() && /@/.test(S.backer.email) 
 
 /* ---------- STEP2 ---------- */
 function stepCases(){
-  var need=S.reward.cases, now=totalCases();
-  var h='<h2><span class="num">2</span>ケース本体の機種</h2>'
-    + '<p class="lead">ケース本体は <b>'+need+'コ</b> です。お使いの機種ごとに個数を指定してください。ご家族やお友だちで機種が違っても大丈夫です。<br><b>ここで選んだ機種が、次のシート作成でそのまま使われます。</b></p>'
-    + '<div class="tot '+(now===need?"ok":(now>need?"over":""))+'"><span>指定済み</span><span>'+now+' / '+need+' コ</span></div>';
+  var so=sheetsOnly(), need=S.reward.cases, now=totalCases();
+  var ok = so ? S.cases.length>0 : now===need;
+  var h;
+  if(so){
+    h='<h2><span class="num">2</span>お持ちのケースの機種</h2>'
+      + '<p class="lead">このプランは着せ替えシートのみです。<b>すでにお持ちのLOCO-Pケースの機種</b>を選んでください（複数の機種に分けても大丈夫です）。<br><b>ここで選んだ機種が、次のシート作成でそのまま使われます。</b></p>';
+  } else {
+    h='<h2><span class="num">2</span>ケース本体の機種</h2>'
+      + '<p class="lead">ケース本体は <b>'+need+'コ</b> です。お使いの機種ごとに個数を指定してください。ご家族やお友だちで機種が違っても大丈夫です。<br><b>ここで選んだ機種が、次のシート作成でそのまま使われます。</b></p>'
+      + '<div class="tot '+(now===need?"ok":(now>need?"over":""))+'"><span>指定済み</span><span>'+now+' / '+need+' コ</span></div>';
+  }
   S.cases.forEach(function(c,i){
     var m=findModel(c.tag);
     h += '<div class="card"><b style="font-size:14px">'+esc(m?m.name:"?")+'</b>'
-      + '<div class="cnt" style="margin-top:8px"><button data-cm="'+i+'">−</button>'
-      + '<div class="v">'+c.qty+'コ</div><button data-cp="'+i+'">＋</button>'
+      + '<div class="cnt" style="margin-top:8px">'
+      + (so ? '' : '<button data-cm="'+i+'">−</button><div class="v">'+c.qty+'コ</div><button data-cp="'+i+'">＋</button>')
       + '<button class="del" data-cd="'+i+'" style="margin-left:auto;background:none;border:0;color:#C0392B;font-weight:700;cursor:pointer">削除</button>'
       + '</div></div>';
   });
@@ -384,11 +394,11 @@ function stepCases(){
   [].forEach.call(document.querySelectorAll("[data-cm]"),function(b){ b.onclick=function(){ var i=+b.getAttribute("data-cm"); if(S.cases[i].qty>1)S.cases[i].qty--; render(); }; });
   [].forEach.call(document.querySelectorAll("[data-cd]"),function(b){ b.onclick=function(){ S.cases.splice(+b.getAttribute("data-cd"),1); S.designs=[]; render(); }; });
   document.getElementById("addcase").onclick=function(){ showPicker(function(tag){
-    var hit=false; S.cases.forEach(function(c){ if(c.tag===tag){ c.qty++; hit=true; } });
+    var hit=false; S.cases.forEach(function(c){ if(c.tag===tag){ if(!so) c.qty++; hit=true; } });
     if(!hit) S.cases.push({tag:tag,qty:1});
     render();
   }); };
-  nav("戻る","次へ",function(){ S.step=2; render(); }, now===need, function(){ S.step=0; render(); });
+  nav("戻る","次へ",function(){ S.step=2; render(); }, ok, function(){ S.step=0; render(); });
 }
 function showPicker(cb){
   var p=document.getElementById("picker");
@@ -694,7 +704,7 @@ function stepConfirm(){
     + '<div class="card"><table class="sum">'
     + row("お名前",esc(S.backer.name)) + row("ご支援メール",esc(S.backer.email))
     + row("リターン",esc(S.reward.label))
-    + row("ケース本体",S.cases.map(function(c){ var m=findModel(c.tag); return esc(m?m.name:"?")+" × "+c.qty+"コ"; }).join("<br>"))
+    + row(sheetsOnly()?"お持ちのケース":"ケース本体",S.cases.map(function(c){ var m=findModel(c.tag); return esc(m?m.name:"?")+(sheetsOnly()?"":" × "+c.qty+"コ"); }).join("<br>"))
     + row("シート合計",totalSheets()+"枚（デザイン"+S.designs.length+"種類）")
     + row("お届け先",esc(S.ship.name)+"<br>〒"+esc(S.ship.zip)+"<br>"+esc(S.ship.addr))
     + row("ご連絡先",esc(S.ship.method)+"／"+esc(S.ship.contact))
@@ -707,7 +717,7 @@ function stepConfirm(){
   });
   h+='</div>';
   h += S.sending ? '<div class="load" style="margin:14px 0"><div class="spin"></div>送信中です。そのままお待ちください…</div>'
-                 : '<div class="hint-box">送信後、内容を確認のうえスタッフよりご連絡いたします。発送は2026年10月を予定しています。</div>';
+                 : '<div class="hint-box">送信後、内容を確認のうえスタッフよりご連絡いたします。発送は2026年11月を予定しています。</div>';
   $view.innerHTML=h;
   S.designs.forEach(function(d,i){ drawThumb(document.getElementById("cf"+i), d, 100); });
   nav("戻る",(S.sending?"送信中…":"この内容で入稿する"),submit,!S.sending,function(){ S.step=3; render(); });
@@ -722,7 +732,7 @@ function renderDone(){
     + (S.imgFailed
         ? '<div class="err" style="text-align:left">お写真の送信だけがうまくいきませんでした。お手数ですが、<b>受付番号を件名に入れて mihara@kihoukai.or.jp へお写真をメールで送って</b>いただけますか。ご注文内容は受け付けております。</div>'
         : '')
-    + '<div class="hint-box" style="text-align:left">発送は2026年10月を予定しています。ご不明な点は mihara@kihoukai.or.jp までお問い合わせください。</div></div>';
+    + '<div class="hint-box" style="text-align:left">発送は2026年11月を予定しています。ご不明な点は mihara@kihoukai.or.jp までお問い合わせください。</div></div>';
   $nav.innerHTML="";
 }
 
@@ -822,7 +832,7 @@ function submit(){
     L.push("■支援者名："+S.backer.name);
     L.push("■ご支援メール："+S.backer.email);
     L.push("■リターン："+S.reward.label);
-    L.push("■ケース本体："+S.cases.map(function(c){ var m=findModel(c.tag); return (m?m.name:"?")+"（"+(m?m.tag:"")+"）× "+c.qty+"コ"; }).join(" ／ "));
+    L.push((sheetsOnly()?"■お持ちのケース（シートのみ）：":"■ケース本体：")+S.cases.map(function(c){ var m=findModel(c.tag); return (m?m.name:"?")+"（"+(m?m.tag:"")+"）"+(sheetsOnly()?"":"× "+c.qty+"コ"); }).join(" ／ "));
     L.push("■シート合計："+totalSheets()+"枚（デザイン"+S.designs.length+"種類）");
     S.designs.forEach(function(d,i){
       var m=findModel(d.deviceTag);
